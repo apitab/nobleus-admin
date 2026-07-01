@@ -22,7 +22,7 @@ class FrontAppAsset extends AssetBundle
         'lib/jquery/jquery.min.js',
         'lib/jqueryui/jquery-ui.min.js',
         'lib/feather-icons/feather.min.js',
-        'js/hwa.js',
+        'js/app.js',
     ];
     public $depends = [
         

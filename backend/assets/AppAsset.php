@@ -24,7 +24,7 @@ class AppAsset extends AssetBundle
         'lib/feather-icons/feather.min.js',
         //'lib/perfect-scrollbar/perfect-scrollbar.min.js',
         'lib/jqueryui/jquery-ui.min.js',
-        'js/hwa.js',
+        'js/app.js',
     ];
     public $depends = [
         
