@@ -1,6 +1,6 @@
 <footer class="footer">
     <div>
-        <span>&copy; <?= Date('Y')?> Hargeisa Water Agency | Dhaamiye App | All Rights Reserved </span>
+        <span>&copy; <?= Date('Y')?> Demo | All Rights Reserved </span>
     </div>
     <div>
         <nav class="nav">

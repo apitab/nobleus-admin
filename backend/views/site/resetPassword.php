@@ -21,7 +21,7 @@ $this->title = "Reset Password";
             <div class="align-items-center justify-content-center pd-t-20" style="min-width: 40%">
                 <h4 class="tx-20 tx-sm-24 tx-center">Reset your password</h4>
                 <h6 class="text-center mg-b-20">
-                    Hargeisa Water Agency | Dhaamiye App
+                    Demo
                 </h6>
                 <p class="tx-color-03 mg-b-30 tx-center">Enter your new password below.</p>
 

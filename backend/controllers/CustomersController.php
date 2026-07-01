@@ -136,7 +136,7 @@ class CustomersController extends CustomController
             return $this->redirect(['view', 'id' => $id]);
         }
 
-        $title = trim($this->request->post('title', Yii::t('app', 'Message from Hargeisa Water')));
+        $title = trim($this->request->post('title', Yii::t('app', 'Message from Demo')));
         $message = trim($this->request->post('message', ''));
 
         if ($message === '') {

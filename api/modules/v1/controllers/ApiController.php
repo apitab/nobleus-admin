@@ -25,7 +25,7 @@ class ApiController extends Controller
 
         header($status_header);
         header('Content-type: ' . $content_type);
-        header('X-Powered-By: ' . "HWA");
+        header('X-Powered-By: ' . "DEMO");
     }
 
     /**

@@ -91,49 +91,49 @@ class Helpers
         $template = '';
         switch ($type) {
             case 'FORGOT_PASSWORD_SMS':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye Darawal password reset code is %code%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo password reset code is %code%');
                 break;
             case 'ACTIVATION_SMS':
-                $template = Yii::t("app", "Hello %name%, Your Dhaamiye Activation code is %code%");
+                $template = Yii::t("app", "Hello %name%, Your Demo Activation code is %code%");
                 break;
             case 'ORDER_CANCELED_BY_VENDOR':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been rejected');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been rejected');
                 break;
             case 'VENDOR_ORDER_CREATED':
-                $template = Yii::t('app', 'Hello %name%, REF:HWA-%ref%, You have a %single_shared% Dhaamiye order of %volume% to %address%,  %date%. %order_details%');
+                $template = Yii::t('app', 'Hello %name%, REF:DEMO-%ref%, You have a %single_shared% Demo order of %volume% to %address%,  %date%. %order_details%');
                 break;
             case 'CUSTOMER_ORDER_ACCEPTED':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been accepted and ready for delivery on %date%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been accepted and ready for delivery on %date%');
                 break;
             case 'VENDOR_ORDER_DELIVERED':
-                $template = Yii::t('app', 'Hello %name%, Your Darawal order for %volume% to %address% has been delivered on %date%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% to %address% has been delivered on %date%');
                 break;
             case 'CUSTOMER_ORDER_CREATED':
-                $template = Yii::t('app', 'Hello %name%, Your %single_shared% Dhaamiye order for %volume% from %vendor_name% on %date% has been created successfully');
+                $template = Yii::t('app', 'Hello %name%, Your %single_shared% Demo order for %volume% from %vendor_name% on %date% has been created successfully');
                 break;
             case 'CUSTOMER_ORDER_REJECTED':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% on %date% has been declined. Kindly select another vendor from Dhaamiye app');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% on %date% has been declined. Kindly select another vendor from Demo app');
                 break;
             case 'CUSTOMER_ORDER_ON_THE_WAY':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% is on the way to %address% on %date%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% is on the way to %address% on %date%');
                 break;
             case 'CUSTOMER_ORDER_DELIVERED':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been delivered on %date%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been delivered on %date%');
                 break;
             case 'CUSTOMER_ORDER_MARKED_AS_PAID':
-                $template = Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been marked as paid on %date%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been marked as paid on %date%');
                 break;
             case 'VENDOR_ACCOUNT_CREATED':
-                $template = Yii::t('app', 'Hello %name%, Your Darawal vendor account has been created successfully. Your login credentials are as follows: Phone: %phone% and Password: %password%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo vendor account has been created successfully. Your login credentials are as follows: Phone: %phone% and Password: %password%');
                 break;
             case 'VENDOR_ACCOUNT_RESET':
-                $template = Yii::t('app', 'Hello %name%, Your Darawal vendor account has been reset. Your new login credentials are as follows: Phone: %phone% and Password: %password%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo vendor account has been reset. Your new login credentials are as follows: Phone: %phone% and Password: %password%');
                 break;
             case 'VENDOR_ORDER_ACCEPTED':
                 $template = Yii::t('app', 'Hello %name%, You have accepted to deliver %volume% to %address% on %date%. REF-%ref%');
                 break;
             case 'VENDOR_ORDER_MARKED_AS_PAID':
-                $template = Yii::t('app', 'Hello %name%, Your Darawal order for %volume% to %address% has been marked as paid on %date%');
+                $template = Yii::t('app', 'Hello %name%, Your Demo order for %volume% to %address% has been marked as paid on %date%');
                 break;
                 
         }
@@ -214,7 +214,7 @@ class Helpers
         $message = self::getSMSTemplate('CUSTOMER_ORDER_CREATED', $request->language);
         $message = str_replace("%name%", $customer->alias, $message);
         $message = str_replace("%volume%", $request->volume_requested, $message);
-        $message = str_replace("%vendor_name%", $vendor ? $request->vendor->other_names : Yii::t('app', 'Dhaamiye'), $message);
+        $message = str_replace("%vendor_name%", $vendor ? $request->vendor->other_names : Yii::t('app', 'Demo'), $message);
         $message = str_replace("%date%", self::getHumanReadableDate($request->delivery_date), $message);
         $message = str_replace("%order_details%", "dhaamiye://order/" . $request->id, $message);
         $message = str_replace("%single_shared%", $request->is_shared_request == 1 ? Yii::t('app', 'Shared') : Yii::t('app', 'Single'), $message);
@@ -254,7 +254,7 @@ class Helpers
         $template = str_replace("%volume%", $request->volume_requested, $template);
         $template = str_replace("%address%", $request->customerAddress->address, $template);
         $template = str_replace("%date%", self::getHumanReadableDate($request->delivery_date), $template);
-        $template = str_replace("%order_details%", "Darawal://order/" . $request->id, $template);
+        $template = str_replace("%order_details%", "Demo://order/" . $request->id, $template);
         $template = str_replace("%single_shared%", $request->is_shared_request == 1 ? Yii::t('app', 'Shared') : Yii::t('app', 'Single'), $template);
 
         //SMS

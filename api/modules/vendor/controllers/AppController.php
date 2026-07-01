@@ -2251,7 +2251,7 @@ class AppController extends ApiController
                 $notification->key_id = $order->vendor->id;
                 $notification->type = 'points';
                 $notification->title = 'Rewards Earned';
-                $notification->message = 'You earned ' . $vendorPoints->points_earned . ' Darawal points for delivery HWA#' . $order->id . '. Distance covered was ' . $vendorPoints->distance_km . ' KM';
+                $notification->message = 'You earned ' . $vendorPoints->points_earned . ' Demo points for delivery DEMO#' . $order->id . '. Distance covered was ' . $vendorPoints->distance_km . ' KM';
                 $notification->status = StatusCodes::CREATE_STATUS;
                 $notification->not_type = 'success';
                 $notification->date_created = $notification->date_modified = Date('Y-m-d H:i:s');

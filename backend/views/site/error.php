@@ -21,7 +21,7 @@ $this->title = $name;
                 <div class="align-items-center justify-content-center pd-t-20" style="min-width: 40%">
                     <h4 class="tx-20 tx-sm-24 text-center">Application Error</h4>
                     <h6 class="text-center mg-b-20">
-                        Hargeisa Water Agency | Dhaamiye App
+                        Demo
                     </h6>
                     <div class="wd-100p d-flex flex-column mg-b-40">
                         <h1><?= Html::encode($this->title) ?></h1>
@@ -42,7 +42,7 @@ $this->title = $name;
             <div class="align-items-center justify-content-center pd-t-20" style="min-width: 40%">
                 <h4 class="tx-20 tx-sm-24 text-center">Application Error</h4>
                 <h6 class="text-center mg-b-20">
-                    Hargeisa Water Agency | Dhaamiye App
+                    Demo
                 </h6>
                 <div class="wd-100p d-flex flex-column mg-b-40">
                     <h1><?= Html::encode($this->title) ?></h1>

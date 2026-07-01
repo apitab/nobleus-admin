@@ -20,8 +20,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => '/imag
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <meta name="description" content="Hargeisa Water Agency | Dhaamiye App">
-    <meta name="author" content="Hargeisa Water Agency">
+    <meta name="description" content="Demo">
+    <meta name="author" content="Demo">
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>

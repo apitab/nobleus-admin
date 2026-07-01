@@ -170,7 +170,7 @@ class CustomerRequests extends \yii\db\ActiveRecord
         $message = ApiHelpers::getSMSTemplate('CUSTOMER_ORDER_CREATED', $request->language);
         $message = str_replace("%name%", $customer->alias, $message);
         $message = str_replace("%volume%", $request->volume_requested, $message);
-        $message = str_replace("%vendor_name%", $vendor ? $request->vendor->other_names : Yii::t('app', 'Dhaamiye'), $message);
+        $message = str_replace("%vendor_name%", $vendor ? $request->vendor->other_names : Yii::t('app', 'Demo'), $message);
         $message = str_replace("%date%", $this->getHumanReadableDate($request->delivery_date), $message);
         $message = str_replace("%order_details%", "dhaamiye_user://order/" . $request->id, $message);
         $message = str_replace("%single_shared%", $request->is_shared_request == 1 ? Yii::t('app', 'Shared') : Yii::t('app', 'Single'), $message);

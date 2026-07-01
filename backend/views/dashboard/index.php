@@ -4,7 +4,7 @@ use backend\helpers\Helpers;
 use common\helpers\ViewHelper;
 
 /** @var yii\web\View $this */
-$this->title = "Dashboard | Hargeisa Water Agency | Dhaamiye App";
+$this->title = "Dashboard | Demo";
 $hourOfDay = Helpers::getTimeOfDay();
 ?>
 <div class="content pd-t-20">

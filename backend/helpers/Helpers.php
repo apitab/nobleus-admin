@@ -81,27 +81,27 @@ class Helpers
     {
         switch ($type) {
             case 'FORGOT_PASSWORD_SMS':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye Darawal password reset code is %code%');
+                return Yii::t('app', 'Hello %name%, Your Demo password reset code is %code%');
             case 'ACTIVATION_SMS':
-                return Yii::t("app", "Hello %name%, Your Dhaamiye Activation code is %code%");
+                return Yii::t("app", "Hello %name%, Your Demo Activation code is %code%");
             case 'ORDER_CANCELED_BY_VENDOR':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been rejected');
+                return Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been rejected');
             case 'VENDOR_ORDER_CREATED':
-                return Yii::t('app', 'Hello %name%, REF:HWA-%ref%, You have a %single_shared% Dhaamiye order of %volume% to %address%,  %date%. %order_details%');
+                return Yii::t('app', 'Hello %name%, REF:DEMO-%ref%, You have a %single_shared% Demo order of %volume% to %address%,  %date%. %order_details%');
             case 'VENDOR_ORDER_ACCEPTED':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been accepted and ready for delivery on %date%');
+                return Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been accepted and ready for delivery on %date%');
             case 'VENDOR_DELIVERED':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% has been delivered on %date%');
+                return Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% has been delivered on %date%');
             case 'CUSTOMER_ORDER_CREATED':
-                return Yii::t('app', 'Hello %name%, Your %single_shared% Dhaamiye order for %volume% from %vendor_name% on %date% has been created successfully');
+                return Yii::t('app', 'Hello %name%, Your %single_shared% Demo order for %volume% from %vendor_name% on %date% has been created successfully');
             case 'VENDOR_ORDER_REJECTED':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye order for %volume% from %vendor_name% on %date% has been rejected');
+                return Yii::t('app', 'Hello %name%, Your Demo order for %volume% from %vendor_name% on %date% has been rejected');
             case 'VENDOR_ACCOUNT_CREATED':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye vendor account has been created successfully. Your login credentials are as follows: Phone: %phone% and Password: %password%');
+                return Yii::t('app', 'Hello %name%, Your Demo vendor account has been created successfully. Your login credentials are as follows: Phone: %phone% and Password: %password%');
             case 'VENDOR_ACCOUNT_RESET':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye vendor account has been reset. Your new login credentials are as follows: Phone: %phone% and Password: %password%');
+                return Yii::t('app', 'Hello %name%, Your Demo vendor account has been reset. Your new login credentials are as follows: Phone: %phone% and Password: %password%');
             case 'USER_ACCOUNT_RESET':
-                return Yii::t('app', 'Hello %name%, Your Dhaamiye account has been reset. Your new login credentials are as follows: Phone: %phone% and Password: %password%');
+                return Yii::t('app', 'Hello %name%, Your Demo account has been reset. Your new login credentials are as follows: Phone: %phone% and Password: %password%');
         }
     }
 

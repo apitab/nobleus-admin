@@ -419,7 +419,7 @@ use backend\helpers\StatusCodes;
                 <?= Html::beginForm(['customers/send-message', 'id' => $model->id], 'post', ['id' => 'send-message-form']) ?>
                     <div class="mb-3">
                         <label class="form-label"><?= Yii::t('app', 'Subject') ?></label>
-                        <?= Html::textInput('title', Yii::t('app', 'Message from Hargeisa Water'), [
+                        <?= Html::textInput('title', Yii::t('app', 'Message from Demo'), [
                             'class' => 'form-control',
                             'maxlength' => 100,
                         ]) ?>

@@ -8,7 +8,7 @@ use backend\helpers\Helpers;
 /** @var yii\web\View $this */
 /** @var backend\models\CustomerRequests $model */
 
-$this->title = "Request Details: HWA-" . $model->id;
+$this->title = "Request Details: DEMO-" . $model->id;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="content pd-t-20">
@@ -17,7 +17,7 @@ $this->title = "Request Details: HWA-" . $model->id;
             'title' => '<i data-feather="file-text" class="feather-medium"></i> Request Details',
             'links' => [
                 ['title' => 'Customer Requests', 'url' => ['index'], 'active' => false],
-                ['title' => 'Request HWA-' . $model->id, 'active' => true]
+                ['title' => 'Request DEMO-' . $model->id, 'active' => true]
             ],
         ]); ?>
         <?= ViewHelper::displayFlash(); ?>
@@ -30,7 +30,7 @@ $this->title = "Request Details: HWA-" . $model->id;
                         <span class="tx-medium tx-white tx-18"><?= substr($model->customer->alias, 0, 1) ?></span>
                     </div>
                     <div>
-                        <h3 class="mg-b-5">HWA-<?= $model->id ?></h3>
+                        <h3 class="mg-b-5">DEMO-<?= $model->id ?></h3>
                         <p class="tx-color-03 mg-b-0"><?= Html::encode($model->customer->alias) ?> • <?= Html::encode($model->customer->phone_number) ?></p>
                     </div>
                 </div>

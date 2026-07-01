@@ -20,7 +20,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                     <div class="card-body pd-30">
                         <!-- Header -->
                         <div class="text-center mb-4">
-                            <h2 class="tx-24 tx-bold mb-2">Hargeisa Water Agency (HWA)</h2>
+                            <h2 class="tx-24 tx-bold mb-2">Demo (DEMO)</h2>
                             <p class="tx-14 text-muted">Terms of Use & Privacy Policy for Google Play Console Apps</p>
                         </div>
 
@@ -30,7 +30,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                         <div class="mg-b-30">
                             <h3 class="tx-18 tx-bold mg-b-15">1. Introduction</h3>
                             <p class="tx-14 mg-b-10">
-                                This Terms of Use and Privacy Policy ("Policy") applies to all mobile applications developed, maintained, or published by Hargeisa Water Agency (HWA) via the Google Play Console. It outlines the rules governing app usage, data handling practices, and compliance with Google Play Developer Policies.
+                                This Terms of Use and Privacy Policy ("Policy") applies to all mobile applications developed, maintained, or published by Demo (DEMO) via the Google Play Console. It outlines the rules governing app usage, data handling practices, and compliance with Google Play Developer Policies.
                             </p>
                             <p class="tx-14 mg-b-0">
                                 By using or downloading our apps from the Google Play Store, you agree to these terms.
@@ -42,7 +42,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                             <h3 class="tx-18 tx-bold mg-b-15">2. Scope</h3>
                             <p class="tx-14 mg-b-10">This Policy covers:</p>
                             <ul class="tx-14 mg-b-0">
-                                <li>All mobile applications published under HWA's official developer account.</li>
+                                <li>All mobile applications published under DEMO's official developer account.</li>
                                 <li>Data collected from users via apps listed on the Google Play Store.</li>
                                 <li>Compliance with Google's Developer Program Policies, Privacy Policy, and applicable data protection regulations.</li>
                             </ul>
@@ -63,7 +63,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                         <div class="mg-b-30">
                             <h3 class="tx-18 tx-bold mg-b-15">4. Intellectual Property</h3>
                             <ul class="tx-14 mg-b-0">
-                                <li>All content, including logos, text, data, icons, and designs, are property of Hargeisa Water Agency.</li>
+                                <li>All content, including logos, text, data, icons, and designs, are property of Demo.</li>
                                 <li>No material may be copied or reused without written permission.</li>
                                 <li>The agency may use third-party services in compliance with their licenses.</li>
                             </ul>
@@ -137,7 +137,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                                 <li>Withdraw consent at any time</li>
                             </ul>
                             <p class="tx-14 mg-b-0">
-                                Requests can be made by contacting Hargeisa Water Agency IT Department.
+                                Requests can be made by contacting Demo IT Department.
                             </p>
                         </div>
 
@@ -146,7 +146,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                             <h3 class="tx-18 tx-bold mg-b-15">10. App Updates and Store Policy Compliance</h3>
                             <ul class="tx-14 mg-b-10">
                                 <li>Apps may receive automatic or manual updates for security or performance.</li>
-                                <li>HWA ensures compliance with all Google Play Console policies including:</li>
+                                <li>DEMO ensures compliance with all Google Play Console policies including:</li>
                             </ul>
                             <ul class="tx-14 mg-b-0" style="list-style-type: none; padding-left: 20px;">
                                 <li>o Developer Content Policy</li>
@@ -158,7 +158,7 @@ $this->title = 'Privacy Policy & Terms of Use';
                         <!-- Section 11 -->
                         <div class="mg-b-30">
                             <h3 class="tx-18 tx-bold mg-b-15">11. Limitation of Liability</h3>
-                            <p class="tx-14 mg-b-10">HWA shall not be held responsible for:</p>
+                            <p class="tx-14 mg-b-10">DEMO shall not be held responsible for:</p>
                             <ul class="tx-14 mg-b-0">
                                 <li>Service interruptions caused by network providers</li>
                                 <li>Unauthorized use of the app due to loss of devices</li>
@@ -178,9 +178,9 @@ $this->title = 'Privacy Policy & Terms of Use';
                         <div class="mg-b-30">
                             <h3 class="tx-18 tx-bold mg-b-15">13. Contact Us</h3>
                             <div class="bg-light pd-20 rounded">
-                                <p class="tx-14 mg-b-5"><strong>Hargeisa Water Agency (HWA)</strong></p>
+                                <p class="tx-14 mg-b-5"><strong>Demo (DEMO)</strong></p>
                                 <p class="tx-14 mg-b-5">Centre for Digitalization & Water Technology</p>
-                                <p class="tx-14 mg-b-5">📍 Hargeisa, Somaliland</p>
+                                <p class="tx-14 mg-b-5">📍 Demo</p>
                                 <p class="tx-14 mg-b-5">📧 <a href="mailto:info@hargeisawateragency.com">info@hargeisawateragency.com</a></p>
                                 <p class="tx-14 mg-b-0">📞 +252 (63) 4473173</p>
                             </div>

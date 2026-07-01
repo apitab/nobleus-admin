@@ -19,17 +19,17 @@ $this->title = "Download Apps";
             <div class="align-items-center justify-content-center pd-t-20" style="min-width: 60%">
                 <h4 class="tx-20 tx-sm-24 text-center">Downloads</h4>
                 <h6 class="text-center mg-b-20">
-                    Hargeisa Water Agency | Mobile Applications
+                    Demo | Mobile Applications
                 </h6>
                 <?= ViewHelper::displayFlash(); ?>
                 
                 <div class="row mg-b-40">
-                    <!-- User App - Dhaamiye -->
+                    <!-- User App - Demo -->
                     <div class="col-md-6 mg-b-20">
                         <div class="card h-100">
                             <div class="card-header bg-primary text-white">
                                 <h5 class="card-title mb-0">
-                                    <i class="fa fa-users me-2"></i>Dhaamiye - User App
+                                    <i class="fa fa-users me-2"></i>Demo - User App
                                 </h5>
                             </div>
                         <div class="card-body">
@@ -59,7 +59,7 @@ $this->title = "Download Apps";
                                 </div>
                                 <div class="text-center">
                                     <?= Html::a(
-                                        '<i class="fa fa-download me-2"></i>Download Dhaamiye App',
+                                        '<i class="fa fa-download me-2"></i>Download Demo App',
                                         '@web/app/user-app-release.apk',
                                         [
                                             'class' => 'btn btn-primary btn-lg w-100',
@@ -74,12 +74,12 @@ $this->title = "Download Apps";
                         </div>
                     </div>
 
-                    <!-- Vendor App - Darawal -->
+                    <!-- Vendor App - Demo -->
                     <div class="col-md-6 mg-b-20">
                         <div class="card h-100">
                             <div class="card-header bg-success text-white">
                                 <h5 class="card-title mb-0">
-                                    <i class="fa fa-truck me-2"></i>Darawal - Vendor App
+                                    <i class="fa fa-truck me-2"></i>Demo - Vendor App
                                 </h5>
                             </div>
                             <div class="card-body">
@@ -109,7 +109,7 @@ $this->title = "Download Apps";
                                 </div>
                                 <div class="text-center">
                                     <?= Html::a(
-                                        '<i class="fa fa-download me-2"></i>Download Darawal App',
+                                        '<i class="fa fa-download me-2"></i>Download Demo App',
                                         '@web/app/vendor-app-release.apk',
                                         [
                                             'class' => 'btn btn-success btn-lg w-100',

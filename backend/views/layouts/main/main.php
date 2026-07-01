@@ -23,8 +23,8 @@ FrontAppAsset::register($this);
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <meta name="description" content="Hargeisa Water Agency">
-    <meta name="author" content="HWA/UNITAC">
+    <meta name="description" content="Demo">
+    <meta name="author" content="DEMO/UNITAC">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>

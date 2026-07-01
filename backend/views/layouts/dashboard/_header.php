@@ -9,11 +9,11 @@ use backend\helpers\ViewHelper;
 <header class="navbar navbar-header">
     <a href="" id="mainMenuOpen" class="burger-menu"><i data-feather="menu"></i></a>
     <div class="navbar-brand">
-        <a href="<?= Yii::$app->homeUrl; ?>" class="df-logo">Hargeisa<span>Water</span></a>
+        <a href="<?= Yii::$app->homeUrl; ?>" class="df-logo">Demo<span>App</span></a>
     </div><!-- navbar-brand -->
     <div id="navbarMenu" class="navbar-menu-wrapper">
         <div class="navbar-menu-header">
-            <a href="<?= Yii::$app->homeUrl; ?>" class="df-logo">Hargeisa<span>Water</span></a>
+            <a href="<?= Yii::$app->homeUrl; ?>" class="df-logo">Demo<span>App</span></a>
             <a id="mainMenuClose" href=""><i data-feather="x"></i></a>
         </div><!-- navbar-menu-header -->
         <ul class="nav navbar-menu">
@@ -22,7 +22,7 @@ use backend\helpers\ViewHelper;
                 <a href="<?= Yii::$app->homeUrl; ?>" class="nav-link"><i data-feather="home"></i> <?= Yii::t('app','Dashboard'); ?></a>
             </li>
             <li class="nav-item with-sub">
-                <a href="#" class="nav-link"><i data-feather="git-pull-request"></i> <?= Yii::t('app','Dhaamiye Admin') ?></a>
+                <a href="#" class="nav-link"><i data-feather="git-pull-request"></i> <?= Yii::t('app','Demo Admin') ?></a>
                 <div class="navbar-menu-sub">
                     <div class="d-lg-flex">
                         <ul>

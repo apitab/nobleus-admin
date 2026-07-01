@@ -8,7 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'hwa-frontend',
-    'name' => 'Dhaamiye App',
+    'name' => 'Demo',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
