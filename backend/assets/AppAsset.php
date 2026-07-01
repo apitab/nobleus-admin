@@ -16,13 +16,14 @@ class AppAsset extends AssetBundle
         'lib/@fortawesome/fontawesome-free/css/all.min.css',
         'css/dashforge.css',
         'css/dashforge.dashboard.css',
+        'lib/perfect-scrollbar/perfect-scrollbar.css',
     ];
     public $js = [
         'lib/leaflet/leaflet.js',
         'lib/jquery/jquery.min.js',
         'lib/bootstrap/js/bootstrap.bundle.min.js',
         'lib/feather-icons/feather.min.js',
-        //'lib/perfect-scrollbar/perfect-scrollbar.min.js',
+        'lib/perfect-scrollbar/perfect-scrollbar.min.js',
         'lib/jqueryui/jquery-ui.min.js',
         'js/app.js',
     ];

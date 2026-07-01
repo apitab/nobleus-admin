@@ -14,8 +14,7 @@ class FrontAppAsset extends AssetBundle
     public $css = [
         'lib/bootstrap/css/bootstrap.min.css',
         'lib/@fortawesome/fontawesome-free/css/all.min.css',
-        'css/site.css',
-        'css/responsive-main.css'
+        'css/site.css'
     ];
     public $js = [
         'lib/bootstrap/js/bootstrap.bundle.min.js',

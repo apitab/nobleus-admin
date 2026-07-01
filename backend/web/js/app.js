@@ -5,8 +5,9 @@ $(function () {
   feather.replace();
 
   // Initialize PerfectScrollbar of navbar menu for mobile only
-  if (window.matchMedia('(max-width: 991px)').matches) {
-    const psNavbar = new PerfectScrollbar('#navbarMenu', {
+  let psNavbar = null;
+  if (window.matchMedia('(max-width: 991px)').matches && typeof PerfectScrollbar !== 'undefined') {
+    psNavbar = new PerfectScrollbar('#navbarMenu', {
       suppressScrollX: true
     });
   }
@@ -35,7 +36,7 @@ $(function () {
     $(this).parent().toggleClass('show');
     $(this).parent().siblings().removeClass('show');
 
-    if (window.matchMedia('(max-width: 991px)').matches) {
+    if (psNavbar) {
       psNavbar.update();
     }
   })
@@ -66,9 +67,12 @@ $(function () {
 
   // Initialize PerfectScrollbar for sidebar menu
   if ($('#sidebarMenu').length) {
-    const psSidebar = new PerfectScrollbar('#sidebarMenu', {
-      suppressScrollX: true
-    });
+    let psSidebar = null;
+    if (typeof PerfectScrollbar !== 'undefined') {
+      psSidebar = new PerfectScrollbar('#sidebarMenu', {
+        suppressScrollX: true
+      });
+    }
 
 
     // Showing sub menu in sidebar
@@ -76,7 +80,9 @@ $(function () {
       e.preventDefault();
       $(this).parent().toggleClass('show');
 
-      psSidebar.update();
+      if (psSidebar) {
+        psSidebar.update();
+      }
     })
   }
 
