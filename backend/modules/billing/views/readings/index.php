@@ -16,6 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Reading', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Post to Billing (28th)', ['post-to-billing'], [
+            'class' => 'btn btn-primary',
+            'data' => [
+                'confirm' => 'Post the readings for the 28th of this month to the billing server?',
+                'method' => 'post',
+            ],
+        ]) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -94,22 +101,49 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => false,
             ],
             [
-                'attribute' => 'meter_id',
-                'label' => 'Meter ID',
-                'value' => function ($model) {
-                    return $model->meter ? $model->meter->id : null;
-                },
-                'filter' => false,
-            ],
-            [
                 'label' => 'Meter Type',
                 'value' => function ($model) {
-                    return $model->meter ? $model->meter->meter_type : null;
+                    if (!$model->meter) {
+                        return null;
+                    }
+                    // Ultrasonic meters show the frame_type; b-meters show the pipe diameter (DN15/DN20)
+                    $type = strtolower((string) $model->meter->meter_type);
+                    if (strpos($type, 'ultrasonic') !== false) {
+                        return $model->meter->frame_type;
+                    }
+                    if (strpos($type, 'bmeter') !== false || strpos($type, 'b-meter') !== false) {
+                        return $model->meter->diameter;
+                    }
+                    return $model->meter->meter_type;
                 },
             ],
             'reading_time',
-            'reading_value',
-            'status',
+            [
+                'label' => 'Reading (m³)',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    // Raw reading_value is in liters; m³ = liters / 1000
+                    $m3 = (float) $model->reading_value / 1000;
+                    $display = number_format($m3, 2) . ' m³';
+                    // Zero readings are shown but never posted to billing
+                    if ((int) floor($m3) === 0) {
+                        return $display . ' <span class="label label-warning" style="background:#faa405;color:#fff;padding:1px 6px;border-radius:3px;font-size:11px;">0 — not posted</span>';
+                    }
+                    return $display;
+                },
+            ],
+            [
+                'attribute' => 'status',
+                'label' => 'Status',
+                'format' => 'raw',
+                'filter' => ['' => 'All Status', '1' => 'Active', '0' => 'Inactive'],
+                'value' => function ($model) {
+                    $active = $model->meter ? (int) $model->meter->status === 1 : (int) $model->status === 1;
+                    return $active
+                        ? '<span class="label label-success" style="background:#28a745;color:#fff;padding:2px 8px;border-radius:3px;">Active</span>'
+                        : '<span class="label label-default" style="background:#6c757d;color:#fff;padding:2px 8px;border-radius:3px;">Inactive</span>';
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
