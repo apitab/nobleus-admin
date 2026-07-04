@@ -30,26 +30,73 @@ $this->title = Yii::t('app', 'Alarm History') . ' - ' . $meter->serial_number;
             <div class="row">
                 <div class="col-md-6">
                     <h5 class="mg-b-15"><?= Yii::t('app', 'Meter Information') ?></h5>
+                    <?php
+                    // Get last two readings for consumption calculation
+                    $readings = $meter->getReadings()->orderBy(['reading_time' => SORT_DESC])->limit(2)->all();
+                    $lastReading = $readings[0] ?? null;
+                    $prevReading = $readings[1] ?? null;
+                    $consumption = ($lastReading && $prevReading) ? $lastReading->reading_value - $prevReading->reading_value : null;
+                    ?>
                     <table class="table table-borderless table-sm">
                         <tr>
                             <td class="tx-medium" style="width: 150px;"><?= Yii::t('app', 'Serial Number') ?></td>
-                            <td><?= Html::encode($meter->serial_number) ?></td>
+                            <td><span class="tx-semibold"><?= Html::encode($meter->serial_number) ?></span></td>
                         </tr>
                         <tr>
-                            <td class="tx-medium"><?= Yii::t('app', 'DevEUI') ?></td>
-                            <td><code><?= Html::encode($meter->dev_eui) ?></code></td>
+                            <td class="tx-medium"><?= Yii::t('app', 'Supply No') ?></td>
+                            <td>
+                                <?php if ($meter->assignment && $meter->assignment->supply_no): ?>
+                                    <span class="badge bg-primary"><?= Html::encode($meter->assignment->supply_no) ?></span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Unassigned</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tx-medium"><?= Yii::t('app', 'Customer Phone') ?></td>
+                            <td><?= $meter->assignment->customer_phone ?? '-' ?></td>
                         </tr>
                         <tr>
                             <td class="tx-medium"><?= Yii::t('app', 'Meter Type') ?></td>
                             <td><span class="badge bg-info"><?= Html::encode($meter->meter_type) ?></span></td>
                         </tr>
                         <tr>
-                            <td class="tx-medium"><?= Yii::t('app', 'Supply No') ?></td>
-                            <td><?= $meter->assignment->supply_no ?? '<span class="tx-color-03">Unassigned</span>' ?></td>
+                            <td class="tx-medium"><?= Yii::t('app', 'DevEUI') ?></td>
+                            <td><code class="tx-10"><?= Html::encode($meter->dev_eui) ?></code></td>
                         </tr>
                         <tr>
-                            <td class="tx-medium"><?= Yii::t('app', 'Customer') ?></td>
-                            <td><?= $meter->assignment->customer_phone ?? '-' ?></td>
+                            <td class="tx-medium"><?= Yii::t('app', 'Last Reading') ?></td>
+                            <td>
+                                <?php if ($lastReading): ?>
+                                    <span class="tx-semibold"><?= number_format($lastReading->reading_value, 2) ?> L</span>
+                                    <small class="tx-color-03">(<?= Yii::$app->formatter->asRelativeTime($lastReading->reading_time) ?>)</small>
+                                <?php else: ?>
+                                    <span class="tx-color-03">No readings</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tx-medium"><?= Yii::t('app', 'Previous Reading') ?></td>
+                            <td>
+                                <?php if ($prevReading): ?>
+                                    <span><?= number_format($prevReading->reading_value, 2) ?> L</span>
+                                    <small class="tx-color-03">(<?= Yii::$app->formatter->asRelativeTime($prevReading->reading_time) ?>)</small>
+                                <?php else: ?>
+                                    <span class="tx-color-03">-</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tx-medium"><?= Yii::t('app', 'Consumption') ?></td>
+                            <td>
+                                <?php if ($consumption !== null): ?>
+                                    <span class="tx-semibold <?= $consumption >= 0 ? 'tx-success' : 'tx-danger' ?>">
+                                        <?= $consumption >= 0 ? '+' : '' ?><?= number_format($consumption, 2) ?> L
+                                    </span>
+                                <?php else: ?>
+                                    <span class="tx-color-03">-</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                     </table>
                 </div>

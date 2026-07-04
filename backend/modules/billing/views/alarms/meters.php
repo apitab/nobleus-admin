@@ -40,25 +40,38 @@ $this->title = Yii::t('app', 'Meters Status');
         <div class="card-body">
             <?php $form = ActiveForm::begin(['method' => 'get', 'action' => ['meters']]); ?>
             <div class="row row-xs">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <?= Html::textInput('serial_number', $filters['serial_number'], [
                         'class' => 'form-control',
                         'placeholder' => Yii::t('app', 'Serial Number'),
                     ]) ?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <?= Html::textInput('supply_no', $filters['supply_no'] ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => Yii::t('app', 'Supply No'),
+                    ]) ?>
+                </div>
+                <div class="col-md-2">
                     <?= Html::dropDownList('meter_type', $filters['meter_type'], 
                         array_combine($meterTypes, $meterTypes),
                         ['class' => 'form-control', 'prompt' => Yii::t('app', 'All Meter Types')]
                     ) ?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <?= Html::dropDownList('has_alarms', $filters['has_alarms'], [
                         '' => Yii::t('app', 'All Meters'),
                         '1' => Yii::t('app', 'With Active Alarms Only'),
                     ], ['class' => 'form-control']) ?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <?= Html::dropDownList('assignment_status', $filters['assignment_status'] ?? '', [
+                        '' => Yii::t('app', 'All Assignment'),
+                        'assigned' => Yii::t('app', 'Assigned Only'),
+                        'unassigned' => Yii::t('app', 'Unassigned Only'),
+                    ], ['class' => 'form-control']) ?>
+                </div>
+                <div class="col-md-2">
                     <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary btn-block']) ?>
                 </div>
             </div>
@@ -78,46 +91,81 @@ $this->title = Yii::t('app', 'Meters Status');
                 'tableOptions' => ['class' => 'table table-hover mg-b-0'],
                 'layout' => "{items}\n<div class='card-footer'>{summary}{pager}</div>",
                 'columns' => [
-                    'id',
                     [
                         'attribute' => 'serial_number',
+                        'label' => Yii::t('app', 'Serial Number'),
                         'format' => 'raw',
-                        'value' => function($model) {
-                            $badge = '';
-                            $alarmCount = $model->getActiveAlarmCount();
-                            if ($alarmCount > 0) {
-                                $badgeClass = $model->hasCriticalAlarm() ? 'danger' : 'warning';
-                                $badge = ' <span class="badge bg-' . $badgeClass . '">' . $alarmCount . '</span>';
-                            }
-                            return Html::a($model->serial_number, ['history', 'id' => $model->id], ['class' => 'tx-semibold']) . $badge;
-                        },
+                        'value' => fn($m) => Html::a($m->serial_number, ['history', 'id' => $m->id], ['class' => 'tx-semibold']),
                     ],
-                    'dev_eui',
-                    'meter_type',
                     [
                         'label' => Yii::t('app', 'Supply No'),
-                        'value' => fn($m) => $m->assignment->supply_no ?? '<span class="tx-color-03">Unassigned</span>',
                         'format' => 'raw',
+                        'value' => function($m) {
+                            if ($m->assignment && $m->assignment->supply_no) {
+                                return '<span class="tx-semibold">' . Html::encode($m->assignment->supply_no) . '</span>';
+                            }
+                            return '<span class="badge bg-secondary">Unassigned</span>';
+                        },
                     ],
                     [
-                        'label' => Yii::t('app', 'Customer'),
+                        'attribute' => 'meter_type',
+                        'label' => Yii::t('app', 'Type'),
+                        'format' => 'raw',
+                        'value' => fn($m) => '<span class="badge bg-info">' . Html::encode($m->meter_type) . '</span>',
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Customer Phone'),
                         'value' => fn($m) => $m->assignment->customer_phone ?? '-',
                     ],
                     [
-                        'attribute' => 'status',
+                        'label' => Yii::t('app', 'Last Reading'),
                         'format' => 'raw',
-                        'value' => fn($m) => '<span class="badge bg-' . ($m->status == 1 ? 'success' : 'secondary') . '">' . ($m->status == 1 ? Yii::t('app', 'Active') : Yii::t('app', 'Inactive')) . '</span>',
+                        'value' => function($m) {
+                            $lastReading = $m->getReadings()->orderBy(['reading_time' => SORT_DESC])->one();
+                            if ($lastReading) {
+                                return number_format($lastReading->reading_value, 2) . ' L<br><small class="tx-color-03">' . Yii::$app->formatter->asRelativeTime($lastReading->reading_time) . '</small>';
+                            }
+                            return '<span class="tx-color-03">No readings</span>';
+                        },
                     ],
                     [
-                        'label' => Yii::t('app', 'Active Alarms'),
+                        'label' => Yii::t('app', 'Last Alarm Status'),
                         'format' => 'raw',
                         'value' => function($model) {
-                            $count = $model->getActiveAlarmCount();
-                            if ($count === 0) {
-                                return '<span class="tx-success"><i data-feather="check-circle" class="wd-14 ht-14"></i> OK</span>';
+                            // Get the LAST alarm (most recent) for this meter
+                            $lastAlarm = MeterAlarm::find()
+                                ->where(['meter_id' => $model->id])
+                                ->orderBy(['originated_at' => SORT_DESC])
+                                ->one();
+                            
+                            if (!$lastAlarm) {
+                                return '<span class="tx-success"><i data-feather="check-circle" class="wd-14 ht-14"></i> No Alarms</span>';
                             }
-                            $class = $model->hasCriticalAlarm() ? 'tx-danger' : 'tx-warning';
-                            return '<span class="' . $class . '"><i data-feather="alert-triangle" class="wd-14 ht-14"></i> ' . $count . ' alarm(s)</span>';
+                            
+                            $badgeClass = $lastAlarm->getStatusBadgeClass();
+                            $severityClass = $lastAlarm->getSeverityBadgeClass();
+                            
+                            return '<span class="badge bg-' . $severityClass . ' mg-r-5">' . $lastAlarm->severity . '</span>' .
+                                   '<span class="badge bg-' . $badgeClass . '">' . $lastAlarm->status . '</span>' .
+                                   '<br><small class="tx-color-03">' . $lastAlarm->getAlarmTypeLabel() . '</small>';
+                        },
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Total Alarms'),
+                        'format' => 'raw',
+                        'value' => function($model) {
+                            $total = MeterAlarm::find()->where(['meter_id' => $model->id])->count();
+                            $active = MeterAlarm::find()->where(['meter_id' => $model->id, 'status' => MeterAlarm::STATUS_ACTIVE])->count();
+                            
+                            if ($total == 0) {
+                                return '<span class="tx-color-03">0</span>';
+                            }
+                            
+                            $html = '<span class="tx-semibold">' . $total . '</span>';
+                            if ($active > 0) {
+                                $html .= ' <span class="badge bg-danger">' . $active . ' active</span>';
+                            }
+                            return $html;
                         },
                     ],
                     [
@@ -125,9 +173,9 @@ $this->title = Yii::t('app', 'Meters Status');
                         'template' => '{history}',
                         'buttons' => [
                             'history' => fn($url, $m) => Html::a(
-                                Yii::t('app', 'View History'),
+                                '<i data-feather="clock" class="wd-14 ht-14 mg-r-5"></i>' . Yii::t('app', 'History'),
                                 ['history', 'id' => $m->id],
-                                ['class' => 'btn btn-xs btn-white']
+                                ['class' => 'btn btn-xs btn-outline-primary']
                             ),
                         ],
                     ],

@@ -47,25 +47,53 @@ class AlarmsController extends BaseController
 
     /**
      * Lists all meters with their current alarm status
+     * Shows LAST alarm status only (not duplicates)
      */
     public function actionMeters()
     {
         $query = Meter::find()
-            ->with(['assignment', 'alarms' => function($q) {
-                $q->where(['status' => MeterAlarm::STATUS_ACTIVE])->orderBy(['severity' => SORT_ASC]);
+            ->with(['assignment', 'readings' => function($q) {
+                $q->orderBy(['reading_time' => SORT_DESC])->limit(1);
             }]);
 
         // Apply filters
         $request = Yii::$app->request;
         $meterType = $request->get('meter_type');
         $serialNumber = $request->get('serial_number');
+        $supplyNo = $request->get('supply_no');
         $hasAlarms = $request->get('has_alarms');
+        $assignmentStatus = $request->get('assignment_status');
 
         if ($meterType) {
             $query->andWhere(['meter_type' => $meterType]);
         }
         if ($serialNumber) {
             $query->andWhere(['like', 'serial_number', $serialNumber]);
+        }
+        
+        // Filter by supply_no (requires join with meter_assignments)
+        if ($supplyNo) {
+            $query->joinWith('assignment')
+                  ->andWhere(['like', 'meter_assignments.supply_no', $supplyNo]);
+        }
+        
+        // Filter by assignment status
+        if ($assignmentStatus === 'assigned') {
+            $query->joinWith('assignment')
+                  ->andWhere(['IS NOT', 'meter_assignments.supply_no', null]);
+        } elseif ($assignmentStatus === 'unassigned') {
+            $query->leftJoin('meter_assignments ma2', 'meters.id = ma2.meter_id')
+                  ->andWhere(['OR', ['ma2.id' => null], ['ma2.supply_no' => null]]);
+        }
+
+        // Filter to show only meters with active alarms
+        if ($hasAlarms === '1') {
+            $metersWithAlarms = MeterAlarm::find()
+                ->select('meter_id')
+                ->where(['status' => MeterAlarm::STATUS_ACTIVE])
+                ->distinct()
+                ->column();
+            $query->andWhere(['meters.id' => $metersWithAlarms]);
         }
 
         $dataProvider = new \yii\data\ActiveDataProvider([
@@ -76,16 +104,6 @@ class AlarmsController extends BaseController
             ],
         ]);
 
-        // Filter to show only meters with active alarms
-        if ($hasAlarms === '1') {
-            $metersWithAlarms = MeterAlarm::find()
-                ->select('meter_id')
-                ->where(['status' => MeterAlarm::STATUS_ACTIVE])
-                ->distinct()
-                ->column();
-            $query->andWhere(['id' => $metersWithAlarms]);
-        }
-
         // Get meter types for filter
         $meterTypes = MeterAlarmSearch::getMeterTypes();
 
@@ -95,7 +113,9 @@ class AlarmsController extends BaseController
             'filters' => [
                 'meter_type' => $meterType,
                 'serial_number' => $serialNumber,
+                'supply_no' => $supplyNo,
                 'has_alarms' => $hasAlarms,
+                'assignment_status' => $assignmentStatus,
             ],
         ]);
     }
