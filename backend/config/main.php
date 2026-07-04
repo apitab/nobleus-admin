@@ -11,7 +11,11 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'billing' => [
+            'class' => 'backend\modules\billing\Module',
+        ],
+    ],
     'language' => 'en',
     'components' => [
         'i18n' => [
@@ -55,6 +59,7 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'hostInfo' => $_ENV['BILLING_PORTAL_URL'] ?? null,
             'rules' => [],
         ]
     ],

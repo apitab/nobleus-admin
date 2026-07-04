@@ -59,8 +59,9 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'hostInfo' => $_ENV['API_BASE_URL'] ?? null,
             'rules' => [
-                
+                'POST v1/telemetry-receive' => 'v1/telemetry/receive',
             ],        
         ],
         'request' => [

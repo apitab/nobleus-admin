@@ -46,6 +46,29 @@ use backend\helpers\ViewHelper;
                 </div>
             </li>
             <li class="nav-item with-sub">
+                <a href="#" class="nav-link"><i data-feather="zap"></i> <?= Yii::t('app','Billing') ?></a>
+                <div class="navbar-menu-sub">
+                    <div class="d-lg-flex">
+                        <ul>
+                            <li class="nav-label"><?= Yii::t('app','Billing') ?></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/dashboard/index') ?>" class="nav-sub-link"><i data-feather="home"></i> <?= Yii::t('app','Billing Dashboard') ?></a></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/readings/index') ?>" class="nav-sub-link"><i data-feather="inbox"></i> <?= Yii::t('app','Reading Panel') ?></a></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/customers/index') ?>" class="nav-sub-link"><i data-feather="user"></i> <?= Yii::t('app','Customer Analysis') ?></a></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/flowmeters/index') ?>" class="nav-sub-link"><i data-feather="cpu"></i> <?= Yii::t('app','Flowmeters') ?></a></li>
+                            <li class="nav-label mg-t-20"><?= Yii::t('app','Alarms & Monitoring') ?></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/alarms/index') ?>" class="nav-sub-link"><i data-feather="alert-triangle"></i> <?= Yii::t('app','Alarms Panel') ?></a></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/alarms/meters') ?>" class="nav-sub-link"><i data-feather="activity"></i> <?= Yii::t('app','Meter Status') ?></a></li>
+                        </ul>
+                        <ul>
+                            <li class="nav-label"><?= Yii::t('app','Reports') ?></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/reports/general') ?>" class="nav-sub-link"><i data-feather="file-text"></i> <?= Yii::t('app','General Reading Report') ?></a></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/reports/import-status') ?>" class="nav-sub-link"><i data-feather="check-square"></i> <?= Yii::t('app','Posting Status Report') ?></a></li>
+                            <li class="nav-sub-item"><a href="<?= Yii::$app->urlManager->createUrl('billing/reports/comparative') ?>" class="nav-sub-link"><i data-feather="trending-up"></i> <?= Yii::t('app','Comparative Analysis') ?></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item with-sub">
                 <a href="#" class="nav-link"><i data-feather="file-text"></i> <?= Yii::t('app','Reports') ?></a>
                 <div class="navbar-menu-sub">
                     <div class="d-lg-flex">
