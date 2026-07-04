@@ -41,6 +41,15 @@ class MetersController extends ApiController
 
             $meter = $assignment->meter;
 
+            // Resolve meter type display: ultrasonic -> frame_type, bmeters -> diameter
+            $meterType = $meter->meter_type;
+            $typeLower = strtolower((string) $meterType);
+            if (strpos($typeLower, 'ultrasonic') !== false) {
+                $meterType = $meter->frame_type ?: $meterType;
+            } elseif (strpos($typeLower, 'bmeter') !== false || strpos($typeLower, 'b-meter') !== false) {
+                $meterType = $meter->diameter ?: $meterType;
+            }
+
             $lastAlarm = MeterAlarm::find()
                 ->where(['meter_id' => $meter->id])
                 ->orderBy(['originated_at' => SORT_DESC])
@@ -58,8 +67,8 @@ class MetersController extends ApiController
                 'data' => [
                     'meter_id' => $meter->id,
                     'supply_no' => $assignment->supply_no,
-                    'meter_type' => $meter->meter_type,
-                    'status' => $meter->status,
+                    'meter_type' => $meterType,
+                    'status' => ((int) $meter->status) === 1 ? 'Active' : 'Inactive',
                     'installed_at' => $meter->installed_at,
                     'assigned_at' => $assignment->assigned_at,
                     'last_alarm' => $lastAlarm ? [
@@ -70,6 +79,8 @@ class MetersController extends ApiController
                     ] : null,
                     'last_reading' => $lastReading ? [
                         'reading_time' => $lastReading->reading_time,
+                        'reading_value_liters' => $lastReading->reading_value,
+                        'reading_value_m3' => number_format((float) $lastReading->reading_value / 1000, 2) . ' m³',
                     ] : null,
                 ]
             ]);
