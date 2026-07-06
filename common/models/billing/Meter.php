@@ -10,6 +10,8 @@ use yii\db\Expression;
  * @property int $id
  * @property string $serial_number
  * @property string $meter_type
+ * @property string|null $frame_type
+ * @property string|null $diameter
  * @property string $dev_eui
  * @property string $app_eui
  * @property string $app_key
@@ -38,9 +40,9 @@ class Meter extends ActiveRecord
         return [
             [['serial_number', 'meter_type', 'dev_eui', 'app_eui', 'app_key'], 'required'],
             [['status'], 'integer'],
-            [['installed_at'], 'safe'],
+            [['installed_at', 'frame_type', 'diameter'], 'safe'],
             [['serial_number', 'dev_eui', 'app_eui', 'app_key'], 'string', 'max' => 100],
-            [['meter_type'], 'string', 'max' => 50],
+            [['meter_type', 'frame_type', 'diameter'], 'string', 'max' => 50],
             [['serial_number', 'dev_eui'], 'unique'],
         ];
     }

@@ -6,6 +6,7 @@ use yii\console\Controller;
 use yii\console\ExitCode;
 use common\models\billing\Meter;
 use common\models\billing\MeterAlarm;
+use common\models\billing\MeterAssignment;
 
 /**
  * Syncs alarms from ThingsBoard REST API.
@@ -110,15 +111,16 @@ class TbAlarmSyncController extends Controller
         $this->token = $login['token'];
 
         $this->stdout("Fetching devices from ThingsBoard...\n");
-        
+
         $pageSize = 100;
         $page = 0;
         $hasMore = true;
         $imported = 0;
+        $updated = 0;
 
         while ($hasMore) {
             $devices = $this->request('GET', "/api/tenant/devices?pageSize={$pageSize}&page={$page}", null, $this->token);
-            
+
             if (empty($devices['data'])) {
                 $hasMore = false;
                 continue;
@@ -126,44 +128,86 @@ class TbAlarmSyncController extends Controller
 
             foreach ($devices['data'] as $device) {
                 $deviceName = $device['name'] ?? '';
-                $deviceType = $device['type'] ?? 'unknown';
-                
-                // Check if meter exists
-                $meter = Meter::findOne(['serial_number' => $deviceName]);
-                if ($meter) {
-                    continue; // Already exists
-                }
-
-                // Get device credentials
                 $deviceId = $device['id']['id'] ?? null;
-                if (!$deviceId) {
+                if (!$deviceName || !$deviceId) {
                     continue;
                 }
 
-                $credentials = $this->request('GET', "/api/device/{$deviceId}/credentials", null, $this->token);
-                
-                // Create new meter
-                $meter = new Meter();
-                $meter->serial_number = $deviceName;
-                $meter->meter_type = $deviceType;
-                $meter->dev_eui = $deviceName; // Use device name as dev_eui if not available
-                $meter->app_eui = 'TB-' . substr($deviceId, 0, 16);
-                $meter->app_key = $credentials['credentialsId'] ?? 'unknown';
-                $meter->status = 1; // Active
-                
-                if ($meter->save()) {
-                    $imported++;
-                    $this->stdout("  Imported meter: {$deviceName} (type: {$deviceType})\n");
-                } else {
-                    $this->stderr("  Failed to import meter {$deviceName}: " . json_encode($meter->errors) . "\n");
+                // Server-scope attributes: supplyno (154), phone (300), active
+                $attrs = $this->request('GET',
+                    "/api/plugins/telemetry/DEVICE/{$deviceId}/values/attributes/SERVER_SCOPE?keys=supplyno,phone,active",
+                    null, $this->token);
+                $attrMap = [];
+                foreach ((array) $attrs as $a) {
+                    if (isset($a['key'])) {
+                        $attrMap[$a['key']] = $a['value'];
+                    }
                 }
+                $supplyNo = isset($attrMap['supplyno']) ? trim((string) $attrMap['supplyno']) : null;
+                $phone    = isset($attrMap['phone']) ? trim((string) $attrMap['phone']) : null;
+                $active   = array_key_exists('active', $attrMap)
+                    ? (int) filter_var($attrMap['active'], FILTER_VALIDATE_BOOLEAN) : null;
+
+                // Latest telemetry: frame_type (ultrasonic), diameter (bmeter)
+                $tele = $this->request('GET',
+                    "/api/plugins/telemetry/DEVICE/{$deviceId}/values/timeseries?keys=frame_type,diameter&limit=1",
+                    null, $this->token);
+                $frameType = $tele['frame_type'][0]['value'] ?? null;
+                $diameter  = $tele['diameter'][0]['value'] ?? null;
+
+                // Resolve meter_type from telemetry presence
+                if ($frameType !== null && $frameType !== '') {
+                    $meterType = 'ultrasonic';
+                } elseif ($diameter !== null && $diameter !== '') {
+                    $meterType = 'bmeter';
+                } else {
+                    $meterType = $device['type'] ?? 'unknown';
+                }
+
+                $meter = Meter::findOne(['serial_number' => $deviceName]);
+                $isNew = false;
+                if (!$meter) {
+                    $isNew = true;
+                    $credentials = $this->request('GET', "/api/device/{$deviceId}/credentials", null, $this->token);
+                    $meter = new Meter();
+                    $meter->serial_number = $deviceName;
+                    $meter->dev_eui = $deviceName;
+                    $meter->app_eui = 'TB-' . substr($deviceId, 0, 16);
+                    $meter->app_key = $credentials['credentialsId'] ?? 'unknown';
+                }
+                $meter->meter_type = $meterType;
+                if ($frameType !== null) { $meter->frame_type = (string) $frameType; }
+                if ($diameter !== null)  { $meter->diameter = (string) $diameter; }
+                if ($active !== null)     { $meter->status = $active; }
+                elseif ($isNew)           { $meter->status = 1; }
+
+                if (!$meter->save()) {
+                    $this->stderr("  Failed meter {$deviceName}: " . json_encode($meter->errors) . "\n");
+                    continue;
+                }
+
+                // Upsert assignment so supply_no / phone are available everywhere
+                if ($supplyNo) {
+                    $assignment = MeterAssignment::findOne(['meter_id' => $meter->id]);
+                    if (!$assignment) {
+                        $assignment = new MeterAssignment();
+                        $assignment->meter_id = $meter->id;
+                        $assignment->assigned_by = 0;
+                        $assignment->assigned_at = date('Y-m-d H:i:s');
+                    }
+                    $assignment->supply_no = $supplyNo;      // keep TB spacing: "A - 3 - 338"
+                    if ($phone) { $assignment->customer_phone = $phone; }
+                    $assignment->save();
+                }
+
+                $isNew ? $imported++ : $updated++;
             }
 
             $hasMore = $devices['hasNext'] ?? false;
             $page++;
         }
 
-        $this->stdout("Device sync complete. {$imported} new meter(s) imported.\n");
+        $this->stdout("Device sync complete. {$imported} imported, {$updated} updated.\n");
         return ExitCode::OK;
     }
 

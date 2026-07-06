@@ -24,6 +24,7 @@ class ReadingsController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'post-to-billing' => ['POST'],
                 ],
             ],
         ];
@@ -46,7 +47,14 @@ class ReadingsController extends Controller
 
         // Combine the three parts into supply_no format
         if ($zone !== '' || $area !== '' || $customer !== '') {
-            $params['ReadingSearch']['supply_no'] = trim($zone . '-' . $area . '-' . $customer, '-');
+            $params['ReadingSearch']['supply_no'] = trim($zone . ' - ' . $area . ' - ' . $customer, ' -');
+        }
+
+        // Default the date filter to today's date on first load; user-picked dates override this
+        if (empty($params['ReadingSearch']['date_from']) && empty($params['ReadingSearch']['date_to'])) {
+            $today = date('Y-m-d');
+            $params['ReadingSearch']['date_from'] = $today;
+            $params['ReadingSearch']['date_to'] = $today;
         }
 
         $dataProvider = $searchModel->search($params);
@@ -55,6 +63,111 @@ class ReadingsController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    /**
+     * Post readings to the HWA billing server for a given billing month.
+     *
+     * Rules:
+     *  - Target the 28th of the given month (defaults to current month).
+     *  - Use the reading taken on the 28th; if none exists, fall back to the
+     *    latest reading on/before the 28th and attach a description noting the
+     *    actual reading date.
+     *  - Convert raw liters to cubic metres and post floor(m3) as an integer.
+     *  - Skip readings that floor to 0 m3 (never sent to billing).
+     *
+     * @param string|null $month Billing month as 'Y-m' (e.g. 2026-04); defaults to current month.
+     * @return mixed
+     */
+    public function actionPostToBilling($month = null)
+    {
+        $month = $month ?: date('Y-m');
+        $targetDate = $month . '-28';
+        $targetEnd = $targetDate . ' 23:59:59';
+
+        $billingUrl = Yii::$app->params['billingApiUrl']
+            ?? 'https://core.hwa-smartmetering-app.com/bill/api/meter-reading';
+        $billingToken = Yii::$app->params['billingApiToken'] ?? '';
+
+        // Latest reading per meter on or before the 28th of the target month
+        $rows = MeterReadingRaw::find()
+            ->with('meter.assignment')
+            ->where(['<=', 'reading_time', $targetEnd])
+            ->orderBy(['reading_time' => SORT_DESC])
+            ->all();
+
+        $posted = [];
+        $skipped = [];
+        $seen = [];
+
+        foreach ($rows as $reading) {
+            // Resolve supply_no from meter assignment (canonical source with correct spacing)
+            $supplyNo = $reading->meter->assignment->supply_no ?? $reading->supply_no;
+            if ($supplyNo === null || $supplyNo === '' || isset($seen[$supplyNo])) {
+                continue;
+            }
+            $seen[$supplyNo] = true;
+
+            $m3 = (int) floor((float) $reading->reading_value / 1000);
+
+            // Skip zero readings to avoid false data in the billing server
+            if ($m3 === 0) {
+                $skipped[] = ['supply_no' => $supplyNo, 'reason' => 'zero reading'];
+                continue;
+            }
+
+            $readingDate = date('Y-m-d', strtotime($reading->reading_time));
+            $description = null;
+            if ($readingDate !== $targetDate) {
+                $description = 'No reading on ' . $targetDate
+                    . '; used last available reading from ' . $readingDate . '.';
+            }
+
+            $payload = [
+                'meterNo' => $supplyNo,
+                'reading' => $m3,
+                'date' => $targetDate,
+            ];
+            if ($description !== null) {
+                $payload['description'] = $description;
+            }
+
+            $ok = $this->sendToBilling($billingUrl, $billingToken, $payload);
+            if ($ok) {
+                $posted[] = $payload;
+            } else {
+                $skipped[] = ['supply_no' => $supplyNo, 'reason' => 'billing API error'];
+            }
+        }
+
+        Yii::$app->session->setFlash('success',
+            count($posted) . ' reading(s) posted for ' . $targetDate . ', ' . count($skipped) . ' skipped.');
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Send a single reading payload to the billing API.
+     * @return bool true on HTTP 2xx
+     */
+    protected function sendToBilling($url, $token, array $payload)
+    {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token,
+            ],
+            CURLOPT_TIMEOUT => 15,
+        ]);
+        curl_exec($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return $httpCode >= 200 && $httpCode < 300;
     }
 
     /**

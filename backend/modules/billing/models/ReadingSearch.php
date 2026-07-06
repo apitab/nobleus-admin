@@ -18,7 +18,6 @@ class ReadingSearch extends MeterReadingRaw
         return [
             [['dev_eui', 'supply_no', 'date_from', 'date_to'], 'safe'],
             [['supply_part1', 'supply_part2', 'supply_part3'], 'safe'],
-            [['status'], 'integer'],
         ];
     }
 
@@ -31,7 +30,7 @@ class ReadingSearch extends MeterReadingRaw
 
     public function search($params)
     {
-        $query = MeterReadingRaw::find()->with('meter');
+        $query = MeterReadingRaw::find()->with(['meter.assignment']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -52,18 +51,17 @@ class ReadingSearch extends MeterReadingRaw
                 trim((string) $this->supply_part3),
             ];
             if (implode('', $parts) !== '') {
-                $this->supply_no = trim(implode('-', $parts), '-');
+                $this->supply_no = trim(implode(' - ', $parts), ' -');
             }
         } elseif ($this->supply_no !== null && $this->supply_no !== '') {
             // Populate the individual parts for redisplay in the filter form
-            $parts = explode('-', $this->supply_no);
+            $parts = explode(' - ', $this->supply_no);
             $this->supply_part1 = $parts[0] ?? '';
             $this->supply_part2 = $parts[1] ?? '';
             $this->supply_part3 = $parts[2] ?? '';
         }
 
-        $query->andFilterWhere(['status' => $this->status])
-            ->andFilterWhere(['like', 'dev_eui', $this->dev_eui])
+        $query->andFilterWhere(['like', 'dev_eui', $this->dev_eui])
             ->andFilterWhere(['like', 'supply_no', $this->supply_no]);
 
         if ($this->date_from) {

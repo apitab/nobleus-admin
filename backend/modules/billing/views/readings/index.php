@@ -16,6 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Reading', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Post to Billing (28th)', ['post-to-billing'], [
+            'class' => 'btn btn-primary',
+            'data' => [
+                'confirm' => 'Post the readings for the 28th of this month to the billing server?',
+                'method' => 'post',
+            ],
+        ]) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -49,15 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]) ?>
                 </div>
             </div>
-            
-            <div class="col-md-2">
-                <?= $form->field($searchModel, 'status')->dropDownList([
-                    '' => 'All Status',
-                    '0' => 'Inactive',
-                    '1' => 'Active',
-                ]) ?>
-            </div>
-            
+
             <div class="col-md-3">
                 <label class="control-label">Date Range</label>
                 <div style="display:flex; gap:5px; align-items:center; margin-bottom:10px;">
@@ -89,27 +88,47 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             [
-                'attribute' => 'supply_no',
                 'label' => 'Meter No',
-                'filter' => false,
-            ],
-            [
-                'attribute' => 'meter_id',
-                'label' => 'Meter ID',
                 'value' => function ($model) {
-                    return $model->meter ? $model->meter->id : null;
+                    return $model->meter->assignment->supply_no
+                        ?? ($model->supply_no ?: '-');
                 },
-                'filter' => false,
             ],
             [
                 'label' => 'Meter Type',
                 'value' => function ($model) {
-                    return $model->meter ? $model->meter->meter_type : null;
+                    if (!$model->meter) return '-';
+                    $t = strtolower((string) $model->meter->meter_type);
+                    if ($t === 'ultrasonic') return $model->meter->frame_type ?: 'Ultrasonic';
+                    if ($t === 'bmeter')     return $model->meter->diameter ?: 'B-Meter';
+                    return $model->meter->meter_type;
                 },
             ],
             'reading_time',
-            'reading_value',
-            'status',
+            [
+                'label' => 'Reading (m³)',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    // Raw reading_value is in liters; m³ = liters / 1000
+                    $m3 = (float) $model->reading_value / 1000;
+                    $display = number_format($m3, 2) . ' m³';
+                    // Zero readings are shown but never posted to billing
+                    if ((int) floor($m3) === 0) {
+                        return $display . ' <span class="label label-warning" style="background:#faa405;color:#fff;padding:1px 6px;border-radius:3px;font-size:11px;">0 — not posted</span>';
+                    }
+                    return $display;
+                },
+            ],
+            [
+                'label' => 'Status',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $active = $model->meter && (int) $model->meter->status === 1;
+                    return $active
+                        ? '<span class="badge badge-success">Active</span>'
+                        : '<span class="badge badge-secondary">Inactive</span>';
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

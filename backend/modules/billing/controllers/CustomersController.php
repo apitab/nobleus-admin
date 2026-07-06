@@ -3,36 +3,37 @@
 namespace backend\modules\billing\controllers;
 
 use Yii;
-use backend\modules\billing\models\CustomerAnalysisForm;
+use yii\data\ActiveDataProvider;
+use common\models\billing\MeterAssignment;
 
 class CustomersController extends BaseController
 {
     /**
-     * Customer Analysis panel: search by supply number with date filters.
+     * Customer Analysis panel: list customers with name, phone, meter ID, supply no.
      */
     public function actionIndex()
     {
-        $model = new CustomerAnalysisForm();
-        $model->load(Yii::$app->request->get());
+        $supplyNo = trim((string) Yii::$app->request->get('supply_no', ''));
+        $phone    = trim((string) Yii::$app->request->get('phone', ''));
 
-        $assignment = null;
-        $history = [];
-        $latest = null;
-
-        if ($model->supply_no && $model->validate()) {
-            $assignment = $model->getAssignment();
-            $history = $model->getHistory();
-            $latest = $model->getLatestEntry();
-            if (!$assignment) {
-                Yii::$app->session->setFlash('warning', Yii::t('app', 'No meter assignment found for this supply number.'));
-            }
+        $query = MeterAssignment::find()->with(['meter', 'customer']);
+        if ($supplyNo !== '') {
+            $query->andFilterWhere(['like', 'supply_no', $supplyNo]);
+        }
+        if ($phone !== '') {
+            $query->andFilterWhere(['like', 'customer_phone', $phone]);
         }
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
+            'pagination' => ['pageSize' => 25],
+        ]);
+
         return $this->render('index', [
-            'model' => $model,
-            'assignment' => $assignment,
-            'history' => $history,
-            'latest' => $latest,
+            'dataProvider' => $dataProvider,
+            'supplyNo' => $supplyNo,
+            'phone' => $phone,
         ]);
     }
 }
