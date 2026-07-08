@@ -123,7 +123,7 @@ $this->title = Yii::t('app', 'Meters Status');
                         'value' => function($m) {
                             $lastReading = $m->getReadings()->orderBy(['reading_time' => SORT_DESC])->one();
                             if ($lastReading) {
-                                return number_format($lastReading->reading_value, 2) . ' L<br><small class="tx-color-03">' . Yii::$app->formatter->asRelativeTime($lastReading->reading_time) . '</small>';
+                                return number_format((float) $lastReading->reading_value / 1000, 3) . ' m³<br><small class="tx-color-03">' . Yii::$app->formatter->asRelativeTime($lastReading->reading_time) . '</small>';
                             }
                             return '<span class="tx-color-03">No readings</span>';
                         },

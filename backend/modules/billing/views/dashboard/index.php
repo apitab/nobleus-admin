@@ -80,7 +80,7 @@ $this->title = Yii::t('app', 'Billing Dashboard');
             <tr>
               <td><?= Html::encode($reading->dev_eui) ?></td>
               <td><?= Html::encode($reading->supply_no ?: '-') ?></td>
-              <td><?= number_format($reading->reading_value, 3) ?></td>
+              <td><?= number_format((float) $reading->reading_value / 1000, 3) ?> m³</td>
               <td><?= Yii::$app->formatter->asDatetime($reading->reading_time) ?></td>
               <td><span class="badge badge-<?= $reading->status == 1 ? 'success' : ($reading->status == 2 ? 'danger' : 'warning') ?>"><?= $reading->statusLabel ?></span></td>
             </tr>

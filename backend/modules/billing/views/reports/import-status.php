@@ -44,7 +44,7 @@ $this->title = Yii::t('app', 'Posting Status Report');
             'columns' => [
               ['attribute' => 'supply_no', 'value' => fn($m) => $m->supply_no ?: '-'],
               'dev_eui',
-              ['attribute' => 'reading_value', 'value' => fn($m) => number_format($m->reading_value, 3)],
+              ['attribute' => 'reading_value', 'value' => fn($m) => number_format((float) $m->reading_value / 1000, 3) . ' m³'],
               'reading_time:datetime',
               [
                 'label' => Yii::t('app', 'Posted By'),
@@ -66,16 +66,18 @@ $this->title = Yii::t('app', 'Posting Status Report');
             'columns' => [
               ['attribute' => 'supply_no', 'value' => fn($m) => $m->supply_no ?: '-'],
               'dev_eui',
-              ['attribute' => 'reading_value', 'value' => fn($m) => number_format($m->reading_value, 3)],
+              ['attribute' => 'reading_value', 'value' => fn($m) => number_format((float) $m->reading_value / 1000, 3) . ' m³'],
               'reading_time:datetime',
               [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{import}',
                 'buttons' => [
-                  'import' => fn($url, $m) => Html::a(Yii::t('app', 'Post'), ['/billing/readings/import', 'id' => $m->id], [
-                    'class' => 'btn btn-xs btn-success',
-                    'data' => ['method' => 'post', 'confirm' => Yii::t('app', 'Post this reading to billing?')],
-                  ]),
+                  'import' => fn($url, $m) => Html::beginForm(['/billing/readings/import', 'id' => $m->id], 'post', ['style' => 'display:inline-block'])
+                    . Html::submitButton(Yii::t('app', 'Post'), [
+                      'class' => 'btn btn-xs btn-success',
+                      'onclick' => 'return confirm(' . json_encode(Yii::t('app', 'Post this reading to billing?')) . ');',
+                    ])
+                    . Html::endForm(),
                 ],
               ],
             ],

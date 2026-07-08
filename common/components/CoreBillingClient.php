@@ -46,13 +46,16 @@ class CoreBillingClient extends Component
      *
      * @return array{success:bool,reason:?string,message:string,http_code:int,body:mixed}
      */
-    public function postMeterReading($supplyNo, $readingLiters, $date)
+    public function postMeterReading($supplyNo, $readingLiters, $date, $description = null)
     {
         $payload = [
             'date' => $date,
             'supplyno' => (string)$supplyNo,
             'reading' => (int)floor($readingLiters / 1000),
         ];
+        if ($description !== null && $description !== '') {
+            $payload['description'] = $description;
+        }
 
         [$code, $raw] = $this->request('POST', rtrim($this->readingApiUrl, '/') . '/bill/api/meter-reading', $payload);
         $body = json_decode($raw, true);
@@ -81,8 +84,12 @@ class CoreBillingClient extends Component
                 }
                 return $result;
             }
+            // JSON response without success flag = failure, even on HTTP 200
+            $result['success'] = false;
             $result['message'] = $body['error'] ?? $body['message'] ?? 'Failed to post meter reading';
         } else {
+            // Non-JSON response (e.g. server-side error text) = failure, even on HTTP 200
+            $result['success'] = false;
             $result['message'] = $raw ?: ('HTTP ' . $code);
         }
 

@@ -47,7 +47,7 @@ $this->title = Yii::t('app', 'General Reading Report');
           ],
           [
             'attribute' => 'reading_value',
-            'value' => fn($m) => number_format($m->reading_value, 3),
+            'value' => fn($m) => number_format((float) $m->reading_value / 1000, 3) . ' m³',
           ],
           'reading_time:datetime',
           [

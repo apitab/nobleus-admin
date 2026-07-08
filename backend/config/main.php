@@ -18,6 +18,14 @@ return [
     ],
     'language' => 'en',
     'components' => [
+        'assetManager' => [
+            'bundles' => [
+                // jQuery is already bundled in AppAsset (lib/jquery); don't load it twice
+                'yii\web\JqueryAsset' => [
+                    'js' => [],
+                ],
+            ],
+        ],
         'i18n' => [
             'translations' => [
                 'app*' => [
@@ -59,9 +67,27 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'hostInfo' => $_ENV['BILLING_PORTAL_URL'] ?? null,
             'rules' => [],
         ]
     ],
+    // Restrict the billing domain to the billing module only.
+    // The full interface is available on the portal domain.
+    'on beforeAction' => function ($event) {
+        $host = Yii::$app->request->hostName;
+        $billingHost = parse_url($_ENV['BILLING_PORTAL_URL'] ?? '', PHP_URL_HOST) ?: 'billing.hargeisawatertech.com';
+        if ($host !== $billingHost) {
+            return;
+        }
+        $route = $event->action->controller->route;
+        $allowedRoutes = [
+            'site/index', 'site/login', 'site/logout', 'site/error',
+            'site/request-password-reset', 'site/reset-password',
+            'dashboard/settings', 'dashboard/change-password',
+        ];
+        if (strpos($route, 'billing/') !== 0 && !in_array($route, $allowedRoutes, true)) {
+            $event->isValid = false;
+            Yii::$app->response->redirect(['/billing/dashboard/index'])->send();
+        }
+    },
     'params' => $params,
 ];

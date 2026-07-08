@@ -35,7 +35,7 @@ $this->title = Yii::t('app', 'Alarm History') . ' - ' . $meter->serial_number;
                     $readings = $meter->getReadings()->orderBy(['reading_time' => SORT_DESC])->limit(2)->all();
                     $lastReading = $readings[0] ?? null;
                     $prevReading = $readings[1] ?? null;
-                    $consumption = ($lastReading && $prevReading) ? $lastReading->reading_value - $prevReading->reading_value : null;
+                    $consumption = ($lastReading && $prevReading) ? ($lastReading->reading_value - $prevReading->reading_value) / 1000 : null;
                     ?>
                     <table class="table table-borderless table-sm">
                         <tr>
@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Alarm History') . ' - ' . $meter->serial_number;
                             <td class="tx-medium"><?= Yii::t('app', 'Last Reading') ?></td>
                             <td>
                                 <?php if ($lastReading): ?>
-                                    <span class="tx-semibold"><?= number_format($lastReading->reading_value, 2) ?> L</span>
+                                    <span class="tx-semibold"><?= number_format((float) $lastReading->reading_value / 1000, 3) ?> m³</span>
                                     <small class="tx-color-03">(<?= Yii::$app->formatter->asRelativeTime($lastReading->reading_time) ?>)</small>
                                 <?php else: ?>
                                     <span class="tx-color-03">No readings</span>
@@ -79,7 +79,7 @@ $this->title = Yii::t('app', 'Alarm History') . ' - ' . $meter->serial_number;
                             <td class="tx-medium"><?= Yii::t('app', 'Previous Reading') ?></td>
                             <td>
                                 <?php if ($prevReading): ?>
-                                    <span><?= number_format($prevReading->reading_value, 2) ?> L</span>
+                                    <span><?= number_format((float) $prevReading->reading_value / 1000, 3) ?> m³</span>
                                     <small class="tx-color-03">(<?= Yii::$app->formatter->asRelativeTime($prevReading->reading_time) ?>)</small>
                                 <?php else: ?>
                                     <span class="tx-color-03">-</span>
@@ -91,7 +91,7 @@ $this->title = Yii::t('app', 'Alarm History') . ' - ' . $meter->serial_number;
                             <td>
                                 <?php if ($consumption !== null): ?>
                                     <span class="tx-semibold <?= $consumption >= 0 ? 'tx-success' : 'tx-danger' ?>">
-                                        <?= $consumption >= 0 ? '+' : '' ?><?= number_format($consumption, 2) ?> L
+                                        <?= $consumption >= 0 ? '+' : '' ?><?= number_format((float) $consumption, 3) ?> m³
                                     </span>
                                 <?php else: ?>
                                     <span class="tx-color-03">-</span>

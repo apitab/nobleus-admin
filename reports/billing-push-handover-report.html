@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nobleus Billing Push Handover Report</title>
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --secondary: #6c757d;
+      --success: #198754;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --info: #0dcaf0;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --border: #dee2e6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .cover {
+      text-align: center;
+      padding: 4rem 2rem;
+      border-bottom: 4px solid var(--primary);
+      margin-bottom: 2rem;
+    }
+
+    .cover h1 {
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .cover .subtitle {
+      font-size: 1.2rem;
+      color: var(--secondary);
+      margin-bottom: 2rem;
+    }
+
+    .meta {
+      display: inline-block;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: var(--light);
+    }
+
+    .meta strong { color: var(--dark); }
+
+    h2 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.4rem;
+      margin-top: 2.5rem;
+    }
+
+    h3 {
+      color: var(--dark);
+      margin-top: 1.8rem;
+    }
+
+    p, li { font-size: 0.98rem; }
+
+    ul, ol { padding-left: 1.5rem; }
+
+    .highlight {
+      background: #fff3cd;
+      border-left: 5px solid var(--warning);
+      padding: 1rem;
+      margin: 1.2rem 0;
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    .alert {
+      background: #f8d7da;
+      border-left: 5px solid var(--danger);
+      color: #842029;
+      padding: 1rem;
+      margin: 1.2rem 0;
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    .success-box {
+      background: #d1e7dd;
+      border-left: 5px solid var(--success);
+      color: #0f5132;
+      padding: 1rem;
+      margin: 1.2rem 0;
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) { background: var(--light); }
+
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.88rem;
+      background: #f5f5f5;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+    }
+
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: #f8f9fa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 0.375rem;
+      color: #fff;
+    }
+
+    .badge-success { background: var(--success); }
+    .badge-warning { background: var(--warning); color: #000; }
+    .badge-danger { background: var(--danger); }
+    .badge-info { background: var(--primary); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      background: #fff;
+    }
+
+    .card h4 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--secondary);
+      text-align: center;
+    }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .container { padding: 0; max-width: 100%; }
+      .cover { page-break-after: always; }
+      h2 { page-break-after: avoid; }
+      pre, table { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 768px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Cover -->
+    <div class="cover">
+      <h1>Meter Reading Push to Core Billing</h1>
+      <div class="subtitle">Fix, Refactor &amp; Handover Report</div>
+      <div class="meta">
+        <div><strong>Project:</strong> Nobleus Admin / Billing Module</div>
+        <div><strong>Date:</strong> 7 July 2026</div>
+        <div><strong>Prepared for:</strong> Technical Team &amp; Management</div>
+        <div><strong>Status:</strong> <span class="badge badge-warning">External Blocker</span></div>
+      </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <h2>1. Executive Summary</h2>
+    <p>
+      The billing module was incorrectly reporting that meter readings had been successfully posted to the core billing server even when the remote server returned a database connection error. This caused ledger entries to be marked as <strong>pushed</strong> when they had actually <strong>failed</strong>, resulting in lost readings and unreliable retry logic.
+    </p>
+
+    <div class="success-box">
+      <strong>What was fixed:</strong>
+      <ul>
+        <li>The single-reading post and the bulk “Post to Billing” action now share the same reliable client (<code>CoreBillingClient</code>) and the same response interpretation logic.</li>
+        <li>The client now treats any non-success JSON or non-JSON response as a failure, even when the HTTP status is 200.</li>
+        <li>The wrongly-marked ledger entry (Reading #60672) has been corrected from <code>pushed</code> to <code>failed</code>.</li>
+        <li>The missing <code>billing_audit_logs</code> table was created from the existing migration schema, so audit logging now works.</li>
+        <li>Fallback descriptions for readings not taken on the 28th of the month are preserved.</li>
+      </ul>
+    </div>
+
+    <div class="alert">
+      <strong>Remaining blocker:</strong> The external core billing server (<code>reading.hargeisawatertech.com</code>) is still returning <em>“Database connection failed”</em>. Until the remote database is restored, readings will be queued for retry rather than successfully pushed.
+    </div>
+
+    <!-- Problem Statement -->
+    <h2>2. Problem Statement</h2>
+    <h3>2.1 Observed Symptoms</h3>
+    <ul>
+      <li>Users clicked <strong>“Post to Billing”</strong> and saw the message <em>“Reading posted to billing.”</em></li>
+      <li>Behind the scenes, the core billing server responded with HTTP 200 but its body contained an error such as <code>Database connection failed</code>.</li>
+      <li>The application only checked the HTTP status code (2xx = success), so it recorded the push as successful.</li>
+      <li>The bulk “Post to Billing” action used an old endpoint (<code>core.hwa-smartmetering-app.com</code>) and a different code path than the single-reading post.</li>
+      <li>The <code>billing_audit_logs</code> table did not exist, so audit records could not be written.</li>
+    </ul>
+
+    <h3>2.2 Business Impact</h3>
+    <ul>
+      <li>Clerks believed readings were delivered when they were not.</li>
+      <li>Invoices could not be generated from readings that were never actually posted.</li>
+      <li>Retry logic did not trigger because the local state was <code>pushed</code> instead of <code>failed</code>.</li>
+      <li>Operational reporting was inconsistent between single and bulk posting workflows.</li>
+    </ul>
+
+    <!-- What Was Fixed -->
+    <h2>3. What Was Fixed</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 30%;">Area</th>
+          <th>Change</th>
+          <th style="width: 15%;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Single reading post</td>
+          <td>Now uses <code>Yii::$app->coreBilling</code>, creates a <code>BillingLedger</code> entry, records push response, and marks the raw reading as <code>STATUS_IMPORTED</code>.</td>
+          <td><span class="badge badge-success">Fixed</span></td>
+        </tr>
+        <tr>
+          <td>Bulk “Post to Billing”</td>
+          <td>Refactored from custom cURL helper to <code>CoreBillingClient</code>. Now validates configuration, skips duplicates/zero readings, creates ledger entries, records audit logs, and distinguishes posted vs failed vs skipped counts.</td>
+          <td><span class="badge badge-success">Fixed</span></td>
+        </tr>
+        <tr>
+          <td>Response interpretation</td>
+          <td><code>CoreBillingClient::postMeterReading</code> now parses the JSON body. Only responses with <code>success: true</code> are treated as success; non-success JSON and non-JSON bodies (including DB errors) are treated as failure even on HTTP 200.</td>
+          <td><span class="badge badge-success">Fixed</span></td>
+        </tr>
+        <tr>
+          <td>Ledger correction</td>
+          <td>Reading #60672 (supply <code>A - 10 - 229</code>) was corrected from <code>pushed</code> to <code>failed</code> and its <code>pushed_at</code> timestamp was cleared.</td>
+          <td><span class="badge badge-success">Fixed</span></td>
+        </tr>
+        <tr>
+          <td>Audit logging table</td>
+          <td>The missing <code>billing_audit_logs</code> table was created using the existing migration schema. Audit records are now persisted.</td>
+          <td><span class="badge badge-success">Fixed</span></td>
+        </tr>
+        <tr>
+          <td>Fallback description</td>
+          <td><code>postMeterReading</code> accepts an optional <code>$description</code> parameter so bulk imports can note when the reading used was not from the 28th of the month.</td>
+          <td><span class="badge badge-success">Fixed</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Current State -->
+    <h2>4. Current State</h2>
+    <h3>4.1 Database Snapshot</h3>
+    <p>Verified at the time of this report:</p>
+
+    <h4>Billing Ledger (latest entries)</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Raw Reading ID</th>
+          <th>Supply No</th>
+          <th>Current Reading</th>
+          <th>Push Status</th>
+          <th>Pushed At</th>
+          <th>Reading Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>3</td>
+          <td>60672</td>
+          <td>A - 10 - 229</td>
+          <td>101,825</td>
+          <td><span class="badge badge-danger">failed</span></td>
+          <td><em>NULL</em></td>
+          <td>2026-07-07</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Billing Audit Logs</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Action</th>
+          <th>Supply No</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>5</td><td><span class="badge badge-danger">push_failed</span></td><td>A - 10 - 229</td><td>2026-07-07 22:57:32</td></tr>
+        <tr><td>4</td><td><span class="badge badge-danger">push_failed</span></td><td>A - 10 - 229</td><td>2026-07-07 22:57:09</td></tr>
+        <tr><td>3</td><td><span class="badge badge-success">import</span></td><td>A - 10 - 229</td><td>2026-07-07 22:48:44</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Code Changes</h3>
+    <p>The following files were modified or added:</p>
+    <table>
+      <thead>
+        <tr><th>File</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>common/components/CoreBillingClient.php</code></td><td>Improved response parsing; added optional description parameter.</td></tr>
+        <tr><td><code>backend/modules/billing/controllers/ReadingsController.php</code></td><td>Refactored bulk post; added single <code>actionImport</code>/<code>actionReject</code>; removed old <code>sendToBilling()</code> helper.</td></tr>
+        <tr><td><code>backend/config/main.php</code></td><td>Restricted billing domain to billing routes; disabled duplicate jQuery bundle.</td></tr>
+        <tr><td><code>backend/modules/billing/views/readings/view.php</code></td><td>Updated action buttons/messages.</td></tr>
+        <tr><td><code>backend/modules/billing/views/reports/import-status.php</code></td><td>Updated status display.</td></tr>
+        <tr><td><code>backend/views/layouts/dashboard/_header.php</code></td><td>Header/navigation adjustments.</td></tr>
+        <tr><td><code>backend/assets/AppAsset.php</code></td><td>Asset bundle adjustments.</td></tr>
+        <tr><td><code>deploy/api.hargeisawatertech.com.conf</code></td><td>Added deployment config.</td></tr>
+        <tr><td><code>deploy/billing.hargeisawatertech.com.conf</code></td><td>Added deployment config.</td></tr>
+        <tr><td><code>deploy/SETUP.md</code></td><td>Updated setup documentation.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Technical Details -->
+    <h2>5. Technical Details</h2>
+
+    <h3>5.1 New Response Logic</h3>
+    <p>
+      <code>CoreBillingClient::postMeterReading</code> now returns a structured result:
+    </p>
+    <pre><code>[
+  'success'   => bool,   // true only when remote returns success: true
+  'reason'    => ?string,// already_posted, same_reading, etc.
+  'message'   => string, // human-readable outcome
+  'http_code' => int,    // raw HTTP status
+  'body'      => mixed,  // parsed JSON or raw text
+]</code></pre>
+
+    <h3>5.2 Why HTTP 200 Can Still Be a Failure</h3>
+    <p>
+      The remote server is a PHP application that often emits error text (e.g., <em>“Database connection failed”</em>) while the web server still returns HTTP 200. The previous code only checked the HTTP status. The new code inspects the body:
+    </p>
+    <ul>
+      <li>If the body is valid JSON with <code>success: true</code> → success.</li>
+      <li>If the body is valid JSON without <code>success: true</code> → failure, message taken from <code>error</code> / <code>message</code>.</li>
+      <li>If the body is not valid JSON → failure, message is the raw body text.</li>
+    </ul>
+
+    <h3>5.3 Bulk Post Workflow</h3>
+    <ol>
+      <li>Load all readings on or before the 28th of the selected month, newest first.</li>
+      <li>For each supply, take the latest reading and convert liters → m³.</li>
+      <li>Skip zero readings and already-ledgered readings.</li>
+      <li>Create a <code>BillingLedger</code> entry with previous/current readings and consumption.</li>
+      <li>Call <code>CoreBillingClient::postMeterReading</code>.</li>
+      <li>Update the ledger with push status, timestamp, and response body.</li>
+      <li>Write an audit log (<code>bulk_import</code> or <code>bulk_import_push_failed</code>).</li>
+      <li>Mark the raw reading as <code>STATUS_IMPORTED</code> (failed pushes are retried later by the console command).</li>
+      <li>Show a summary message: posted / failed (queued for retry) / skipped.</li>
+    </ol>
+
+    <h3>5.4 Configuration</h3>
+    <p>The active core billing configuration is now driven by these environment variables:</p>
+    <table>
+      <thead>
+        <tr><th>Variable</th><th>Value / Example</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>CORE_READING_API_URL</code></td><td><code>https://reading.hargeisawatertech.com</code></td></tr>
+        <tr><td><code>CORE_METERS_API_URL</code></td><td><code>https://meters.hargeisawatertech.com</code></td></tr>
+        <tr><td><code>CORE_API_TOKEN</code></td><td>JWT service token</td></tr>
+        <tr><td><code>BILLING_PORTAL_URL</code></td><td><code>https://billing.hargeisawatertech.com</code></td></tr>
+      </tbody>
+    </table>
+    <p>
+      The old <code>BILLING_API_URL</code> / <code>BILLING_API_TOKEN</code> values pointing to <code>core.hwa-smartmetering-app.com</code> are no longer used by the reading push code.
+    </p>
+
+    <!-- Remaining Blocker -->
+    <h2>6. Remaining External Blocker</h2>
+    <div class="alert">
+      <strong>Remote core billing server is down at the database layer.</strong>
+      <p style="margin: 0.5rem 0 0 0;">
+        Endpoint: <code>POST https://reading.hargeisawatertech.com/bill/api/meter-reading</code><br />
+        Response body: <em>Database connection failed</em><br />
+        HTTP status: 200 (body contains error text)
+      </p>
+    </div>
+    <p>
+      Because the new client correctly classifies this as a failure, every push attempt from the Nobleus side will be recorded as <code>failed</code> and queued for the retry console command. The application side is now behaving correctly; no readings will be falsely marked as pushed.
+    </p>
+
+    <!-- Recommendations -->
+    <h2>7. Recommendations &amp; Next Steps</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 20%;">Owner</th>
+          <th>Action</th>
+          <th style="width: 15%;">Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Remote API / DevOps</td>
+          <td>Restore database connectivity on <code>reading.hargeisawatertech.com</code> and confirm the <code>/bill/api/meter-reading</code> endpoint returns <code>{"success": true, ...}</code>.</td>
+          <td><span class="badge badge-danger">Critical</span></td>
+        </tr>
+        <tr>
+          <td>Technical Team</td>
+          <td>Run the billing-push console retry command once the remote DB is restored to flush the queued failed pushes.</td>
+          <td><span class="badge badge-warning">High</span></td>
+        </tr>
+        <tr>
+          <td>Technical Team</td>
+          <td>Review and commit the modified files. Run regression tests on single and bulk post flows.</td>
+          <td><span class="badge badge-warning">High</span></td>
+        </tr>
+        <tr>
+          <td>Management</td>
+          <td>Communicate to clerks that push failures are now accurately reported and will be retried automatically; avoid manual re-entry until the retry command confirms success.</td>
+          <td><span class="badge badge-info">Medium</span></td>
+        </tr>
+        <tr>
+          <td>Technical Team</td>
+          <td>Ensure application log files are writable or forwarded to a central location so future issues can be diagnosed quickly.</td>
+          <td><span class="badge badge-info">Medium</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Appendix -->
+    <h2>8. Appendix: Sample API Response</h2>
+    <p>Example of the remote error that is now correctly treated as a failure:</p>
+    <pre><code>HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+
+Database connection failed</code></pre>
+
+    <h2>9. Appendix: Verification Commands</h2>
+    <table>
+      <thead>
+        <tr><th>Check</th><th>Command</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Latest ledger entries</td>
+          <td><code>SELECT id, raw_reading_id, supply_no, current_reading, push_status FROM billing_ledger ORDER BY id DESC LIMIT 20;</code></td>
+        </tr>
+        <tr>
+          <td>Recent audit logs</td>
+          <td><code>SELECT id, action, supply_no, created_at FROM billing_audit_logs ORDER BY id DESC LIMIT 20;</code></td>
+        </tr>
+        <tr>
+          <td>Remote API health</td>
+          <td><code>curl -X POST https://reading.hargeisawatertech.com/bill/api/meter-reading -H "Authorization: Bearer &lt;token&gt;" -d '{"date":"2026-07-07","supplyno":"A - 10 - 229","reading":101}'</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      Report generated by Devin for Cognition · Nobleus Billing Module · 7 July 2026
+    </div>
+  </div>
+</body>
+</html>

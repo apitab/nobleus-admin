@@ -28,7 +28,7 @@ $this->title = Yii::t('app', 'Reading') . ' #' . $model->id;
           'id',
           'dev_eui',
           'supply_no',
-          ['attribute' => 'reading_value', 'value' => number_format($model->reading_value, 3)],
+          ['attribute' => 'reading_value', 'value' => number_format((float) $model->reading_value / 1000, 3) . ' m³'],
           'reading_time:datetime',
           'source',
           ['attribute' => 'status', 'value' => $model->statusLabel],
@@ -37,14 +37,18 @@ $this->title = Yii::t('app', 'Reading') . ' #' . $model->id;
         ],
       ]) ?>
       <?php if ($model->status == MeterReadingRaw::STATUS_PENDING): ?>
-        <?= Html::a(Yii::t('app', 'Post Reading'), ['import', 'id' => $model->id], [
-          'class' => 'btn btn-success',
-          'data' => ['method' => 'post', 'confirm' => Yii::t('app', 'Post this reading to billing?')],
-        ]) ?>
-        <?= Html::a(Yii::t('app', 'Reject'), ['reject', 'id' => $model->id], [
-          'class' => 'btn btn-outline-danger',
-          'data' => ['method' => 'post', 'confirm' => Yii::t('app', 'Reject this reading?')],
-        ]) ?>
+        <?= Html::beginForm(['import', 'id' => $model->id], 'post', ['style' => 'display:inline-block']) ?>
+          <?= Html::submitButton(Yii::t('app', 'Post Reading'), [
+            'class' => 'btn btn-success',
+            'onclick' => 'return confirm(' . json_encode(Yii::t('app', 'Post this reading to billing?')) . ');',
+          ]) ?>
+        <?= Html::endForm() ?>
+        <?= Html::beginForm(['reject', 'id' => $model->id], 'post', ['style' => 'display:inline-block']) ?>
+          <?= Html::submitButton(Yii::t('app', 'Reject'), [
+            'class' => 'btn btn-outline-danger',
+            'onclick' => 'return confirm(' . json_encode(Yii::t('app', 'Reject this reading?')) . ');',
+          ]) ?>
+        <?= Html::endForm() ?>
       <?php endif; ?>
     </div>
   </div>

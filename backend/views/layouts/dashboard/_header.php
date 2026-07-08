@@ -3,7 +3,10 @@
 use common\helpers\StatusCodes;
 use backend\helpers\ViewHelper;
 
-
+// On the billing domain, only the billing menus are shown.
+// The full interface is available on the portal domain.
+$billingHost = parse_url($_ENV['BILLING_PORTAL_URL'] ?? '', PHP_URL_HOST) ?: 'billing.hargeisawatertech.com';
+$isBillingHost = Yii::$app->request->hostName === $billingHost;
 
 ?>
 <header class="navbar navbar-header">
@@ -21,6 +24,7 @@ use backend\helpers\ViewHelper;
             <li class="nav-item">
                 <a href="<?= Yii::$app->homeUrl; ?>" class="nav-link"><i data-feather="home"></i> <?= Yii::t('app','Dashboard'); ?></a>
             </li>
+            <?php if (!$isBillingHost): ?>
             <li class="nav-item with-sub">
                 <a href="#" class="nav-link"><i data-feather="git-pull-request"></i> <?= Yii::t('app','Demo Admin') ?></a>
                 <div class="navbar-menu-sub">
@@ -45,6 +49,7 @@ use backend\helpers\ViewHelper;
                     </div>
                 </div>
             </li>
+            <?php endif; ?>
             <li class="nav-item with-sub">
                 <a href="#" class="nav-link"><i data-feather="zap"></i> <?= Yii::t('app','Billing') ?></a>
                 <div class="navbar-menu-sub">
@@ -68,6 +73,7 @@ use backend\helpers\ViewHelper;
                     </div>
                 </div>
             </li>
+            <?php if (!$isBillingHost): ?>
             <li class="nav-item with-sub">
                 <a href="#" class="nav-link"><i data-feather="file-text"></i> <?= Yii::t('app','Reports') ?></a>
                 <div class="navbar-menu-sub">
@@ -107,6 +113,7 @@ use backend\helpers\ViewHelper;
                     </div>
                 </div>
             </li>
+            <?php endif; ?>
         </ul>
     </div><!-- navbar-menu-wrapper -->
     <div class="navbar-right">
