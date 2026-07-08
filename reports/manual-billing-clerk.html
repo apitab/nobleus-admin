@@ -135,15 +135,92 @@ strong { color: #0a3d62}
 * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important}
 a { text-decoration: none; color: inherit}
  }
-@media (max-width: 720px) { .cover-title { font-size: 2.1rem}
-.cover-subtitle { font-size: 1.05rem}
-.mock-layout { flex-direction: column}
-.mock-sidebar { width: 100%; display: flex; flex-wrap: wrap; padding: 0.6rem}
-.sidebar-item { margin-right: 0; border-radius: 6px}
-.detail-grid { grid-template-columns: 1fr}
-.detail-label { border-right: none}
-.flow-box { min-width: 100px}
- }
+/* ── TABLET (≤ 900px) ──────────────────────────── */
+@media (max-width: 900px) {
+  .content { padding: 1.5rem 1.5rem 4rem }
+  .toc-list { grid-template-columns: 1fr }
+  .wrapper { padding: 0 }
+  .cover-title { font-size: 2.4rem }
+  .section-body { padding: 1.4rem 1.5rem 1.8rem }
+  .browser-mock .browser-content { padding: .8rem 1rem }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch }
+  table { min-width: 520px }
+}
+
+/* ── MOBILE (≤ 640px) ──────────────────────────── */
+@media (max-width: 640px) {
+  html { font-size: 13px }
+  body { background: #fff }
+
+  /* Cover */
+  .cover-page { padding: 2.5rem 1.2rem; min-height: auto }
+  .cover-title { font-size: 1.75rem; line-height: 1.2 }
+  .cover-subtitle { font-size: .95rem }
+  .cover-meta { grid-template-columns: 1fr; padding: 1rem 1.2rem; width: 100% }
+  .cover-page .shape { display: none }
+
+  /* TOC */
+  .toc-page { padding: 2rem 1rem 2.5rem }
+  .toc-list { grid-template-columns: 1fr; gap: .6rem }
+  .toc-list li { padding: .75rem .9rem }
+
+  /* Section layout */
+  .content { padding: 1rem .75rem 3rem }
+  .hwa-section { border-radius: 10px; margin-bottom: 1.4rem }
+  .section-header { padding: .85rem 1.1rem; gap: .7rem }
+  .section-number { width: 36px; height: 36px; font-size: 1rem }
+  .section-header h2 { font-size: 1.1rem }
+  .section-body { padding: 1.1rem 1rem 1.5rem }
+
+  /* Tables */
+  .table-wrap, table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap }
+  table { min-width: unset }
+  th, td { padding: .45rem .65rem; font-size: .8rem }
+
+  /* Detail grid (reading view mock) */
+  .detail-grid { grid-template-columns: 1fr }
+  .detail-label { border-right: none }
+
+  /* Mock browser */
+  .mock-layout { flex-direction: column }
+  .mock-sidebar { width: 100%; display: flex; flex-wrap: wrap; gap: .3rem; padding: .6rem }
+  .sidebar-item { padding: .3rem .7rem; border-radius: 6px }
+  .browser-mock .browser-bar { padding: .4rem .7rem }
+  .browser-mock .browser-url { font-size: .7rem }
+  .browser-mock .browser-content { padding: .7rem .8rem }
+  .mock-table th, .mock-table td { padding: .3rem .5rem; font-size: .78rem }
+
+  /* Steps */
+  .steps li { flex-direction: column; gap: .4rem }
+  .step-circle { width: 30px; height: 30px; font-size: .82rem }
+
+  /* Flow diagram */
+  .flow-diagram { flex-direction: column; align-items: center }
+  .flow-arrow { transform: rotate(90deg) }
+  .flow-box { min-width: 140px; width: 100%; max-width: 220px }
+
+  /* Callouts */
+  .callout { padding: .8rem 1rem; font-size: .88rem }
+
+  /* Flash alerts */
+  .flash-success, .flash-warning, .flash-danger { padding: .6rem .9rem; font-size: .84rem }
+
+  /* QA boxes */
+  .qa-box { padding: .9rem 1rem }
+
+  /* Footer */
+  .main-footer { padding: 1.2rem 1rem; font-size: .8rem }
+
+  /* Print button */
+  .print-btn { bottom: .8rem; right: .8rem; padding: .65rem 1rem; font-size: .8rem }
+}
+
+/* ── VERY SMALL (≤ 380px) ──────────────────────── */
+@media (max-width: 380px) {
+  .cover-title { font-size: 1.45rem }
+  .section-header h2 { font-size: .95rem }
+  .cover-badge { font-size: .72rem; padding: .4rem .9rem }
+}
 
   </style>
 </head>

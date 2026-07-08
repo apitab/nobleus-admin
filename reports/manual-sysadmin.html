@@ -359,8 +359,14 @@
     /* ══════════════════════════════════════════════════════════
        TABLES
     ══════════════════════════════════════════════════════════ */
+    .table-scroll-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
     .data-table {
       width: 100%;
+      min-width: 500px;
       border-collapse: separate;
       border-spacing: 0;
       border-radius: 10px;
@@ -718,6 +724,78 @@
     .global-footer strong { font-weight: 800; font-size: .92rem; }
 
     /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — TABLET (≤ 900px)
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .page-wrap { padding: 0 1.2rem 2.5rem; }
+      .cover-title  { font-size: 2.2rem; }
+      .cover-subtitle { font-size: 1rem; }
+      .cover-meta-table { min-width: unset; width: 100%; grid-template-columns: 1fr 1fr; }
+      .toc-grid { grid-template-columns: 1fr !important; }
+      .arch-diagram { flex-wrap: wrap; gap: .5rem; }
+      .arch-node { min-width: 110px; }
+      .data-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .section-banner { padding: .9rem 1.1rem; }
+      .section-banner h2 { font-size: 1.2rem; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — MOBILE (≤ 640px)
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      html { font-size: 13px; }
+      .page-wrap { padding: 0 .75rem 2rem; }
+
+      /* Cover */
+      .cover { padding: 2.5rem 1.2rem 2rem; }
+      .cover-title  { font-size: 1.7rem; line-height: 1.2; }
+      .cover-subtitle { font-size: .92rem; }
+      .cover-meta-table { grid-template-columns: 1fr; min-width: unset; width: 100%; }
+      .cover-deco { display: none; }
+
+      /* TOC */
+      .toc-grid { grid-template-columns: 1fr !important; gap: .5rem !important; }
+      .toc-item { padding: .7rem .9rem; }
+
+      /* Section banner */
+      .section-num-circle { width: 34px; height: 34px; font-size: .82rem; }
+      .section-banner { padding: .75rem .9rem; gap: .7rem; }
+      .section-banner h2 { font-size: 1.05rem; }
+      .section-body { padding: 1.1rem .9rem 1.4rem; }
+
+      /* Step list */
+      .step-item { flex-direction: column; gap: .5rem; }
+      .step-num  { width: 32px; height: 32px; font-size: .82rem; }
+
+      /* Architecture */
+      .arch-diagram { flex-direction: column; align-items: center; }
+      .arch-arrow-h, .arch-arrow-v { transform: rotate(90deg); }
+
+      /* Tables — horizontal scroll on small screens */
+      .data-table, .compact-table {
+        display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+      }
+      .data-table thead th, .data-table tbody td { padding: .5rem .7rem; font-size: .8rem; }
+
+      /* Code & terminal */
+      .code-block, .terminal-block { font-size: .78rem; padding: .8rem 1rem; }
+      .code-top-bar { padding: .35rem .8rem; }
+
+      /* Callout boxes */
+      .callout { padding: .75rem .9rem; font-size: .88rem; }
+
+      /* Security checklist */
+      .checklist-item { flex-direction: column; gap: .3rem; }
+
+      /* Global footer */
+      .global-footer { padding: 1.2rem 1rem; font-size: .78rem; }
+
+      /* Print button */
+      .print-fab { bottom: 1rem; right: 1rem; padding: .55rem .9rem; font-size: .78rem; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
        PRINT STYLES
     ══════════════════════════════════════════════════════════ */
     @media print {
@@ -831,7 +909,7 @@
   <p>The system follows a hub-and-spoke integration model: all field devices report to ThingsBoard, which pushes webhook payloads to the portal. The portal normalises, validates, and enriches the data before forwarding relevant billing entries to the Core Billing API at <code>reading.hargeisawatertech.com</code>. A FortiGate firewall VIP at <strong>102.218.58.66</strong> provides network-level separation between the AWS environment and the on-premise HWA LAN.</p>
 
   <div class="subsection-heading">Public-Facing Domains</div>
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr>
         <th>Domain</th>
@@ -867,9 +945,10 @@
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="subsection-heading">Technology Stack</div>
-  <table class="data-table compact">
+  <div class="table-scroll-wrap"><table class="data-table compact">
     <thead>
       <tr><th>Component</th><th>Technology</th><th>Version / Notes</th></tr>
     </thead>
@@ -885,6 +964,7 @@
       <tr><td>Source Control</td><td>Git</td><td>2.x — deployment via git pull</td></tr>
     </tbody>
   </table>
+</div>
 
   <div class="section-footer">
     <span class="sf-logo">HWA Smart Metering Portal</span>
@@ -1030,7 +1110,7 @@
 
   <p>The portal is designed to run on a single AWS EC2 instance in a production-grade configuration. The specifications below reflect the minimum requirements for stable operation with up to 500 active smart meters; scale up the instance type for larger deployments.</p>
 
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr><th>Component</th><th>Requirement</th><th>Recommended Version</th><th>Notes</th></tr>
     </thead>
@@ -1097,6 +1177,7 @@
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="subsection-heading">PHP Extension Verification</div>
   <p>After installation, verify all required PHP extensions are loaded:</p>
@@ -1202,7 +1283,7 @@ Zend Engine v4.3.x, Copyright (c) Zend Technologies
   </div>
 
   <div class="subsection-heading">Key Descriptions</div>
-  <table class="data-table compact">
+  <div class="table-scroll-wrap"><table class="data-table compact">
     <thead>
       <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
     </thead>
@@ -1214,6 +1295,7 @@ Zend Engine v4.3.x, Copyright (c) Zend Technologies
       <tr><td><code>CORE_API_INSECURE_SSL</code></td><td><span class="badge badge-warn">Optional</span></td><td>Set to <code>1</code> only in dev environments with self-signed certs. Never <code>1</code> in production.</td></tr>
     </tbody>
   </table>
+</div>
 
   <div class="callout warning">
     <span class="callout-icon">⚠️</span>
@@ -1244,7 +1326,7 @@ Zend Engine v4.3.x, Copyright (c) Zend Technologies
   <p>The portal uses Apache 2.4 with multiple named virtual hosts to serve different sub-domains from the same EC2 instance. All virtual host configuration files reside in <code>/etc/apache2/sites-available/</code> and are symlinked via <code>a2ensite</code>.</p>
 
   <div class="subsection-heading">Virtual Host File Inventory</div>
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr><th>Config File</th><th>Domain</th><th>Document Root</th><th>SSL File</th></tr>
     </thead>
@@ -1275,6 +1357,7 @@ Zend Engine v4.3.x, Copyright (c) Zend Technologies
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="subsection-heading">Sample Portal Virtual Host (HTTP → HTTPS redirect)</div>
   <div class="code-block">
@@ -1384,7 +1467,7 @@ Congratulations, all simulated renewals succeeded:</span>
   <div class="subsection-heading">6.1 &nbsp;Local MySQL Database</div>
   <p>The portal's primary data store is a MySQL 8.0 database named <code>nobleus_db</code> running locally on the EC2 instance at <code>127.0.0.1:3306</code>. The MySQL user <code>nobleus_app</code> is restricted to localhost connections only. Schema is managed via Yii 2 migrations.</p>
 
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr><th>Table</th><th>Purpose</th><th>Key Columns</th></tr>
     </thead>
@@ -1416,6 +1499,7 @@ Congratulations, all simulated renewals succeeded:</span>
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="subsection-heading">Running Migrations</div>
   <div class="terminal-block">
@@ -1468,7 +1552,7 @@ Migrated up successfully.</span></pre>
   <div class="subsection-heading">6.2 &nbsp;Remote PostgreSQL (HWA On-Premise)</div>
   <p>The Core Billing API writes billing records into an on-premise PostgreSQL database. The portal does not connect to PostgreSQL directly; the Core Billing REST API acts as the intermediary. However, sysadmins must ensure TCP 5432 outbound is reachable for troubleshooting and that the FortiGate VIP is operational.</p>
 
-  <table class="data-table compact">
+  <div class="table-scroll-wrap"><table class="data-table compact">
     <thead>
       <tr><th>Parameter</th><th>Value</th></tr>
     </thead>
@@ -1481,6 +1565,7 @@ Migrated up successfully.</span></pre>
       <tr><td>SSL Mode</td><td><code>require</code> (self-signed cert, verify-full not enforced)</td></tr>
     </tbody>
   </table>
+</div>
 
   <div class="subsection-heading">Verifying Remote PostgreSQL Reachability</div>
   <div class="terminal-block">
@@ -1570,7 +1655,7 @@ Migrated up successfully.</span></pre>
   </div>
 
   <div class="subsection-heading">Billing Date Behaviour Matrix</div>
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr><th>Scenario</th><th>Reading Date</th><th>Billing Date Assigned</th><th>Description / Notes Field</th><th>Outcome</th></tr>
     </thead>
@@ -1612,6 +1697,7 @@ Migrated up successfully.</span></pre>
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="callout note">
     <span class="callout-icon">ℹ️</span>
@@ -1803,7 +1889,7 @@ Fast-forward
 
   <p>The portal generates logs at three levels: the Apache web server layer (access and error), the Yii 2 application layer (runtime log), and the database audit layer (billing push history). Monitoring all three is essential for diagnosing integration issues quickly.</p>
 
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr><th>Log Name</th><th>File Path</th><th>Contains</th><th>Rotation</th></tr>
     </thead>
@@ -1834,6 +1920,7 @@ Fast-forward
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="subsection-heading">Tailing Logs in Real-Time</div>
   <div class="terminal-block">
@@ -1906,7 +1993,7 @@ Fast-forward
 
   <p>The table below covers the most frequently encountered operational issues. For each issue, the most likely cause is listed alongside the diagnostic command and recommended fix. Always check the Yii app log first (<code>runtime/logs/app.log</code>) before escalating.</p>
 
-  <table class="data-table">
+  <div class="table-scroll-wrap"><table class="data-table">
     <thead>
       <tr><th>Symptom</th><th>Likely Cause</th><th>Diagnostic Command</th><th>Resolution</th></tr>
     </thead>
@@ -1949,6 +2036,7 @@ Fast-forward
       </tr>
     </tbody>
   </table>
+</div>
 
   <div class="callout info">
     <span class="callout-icon">🔍</span>
