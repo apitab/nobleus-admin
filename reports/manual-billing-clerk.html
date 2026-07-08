@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HWA Smart Metering — Billing Clerk User Manual</title>
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --secondary: #6c757d;
+      --success: #198754;
+      --warning: #e6a817;
+      --danger: #dc3545;
+      --light: #f8f9fa;
+      --border: #dee2e6;
+      --dark: #212529;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Roboto, Arial, sans-serif; color: var(--dark); background: #fff; line-height: 1.7; }
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+    .cover { text-align: center; padding: 4rem 2rem 3rem; border-bottom: 4px solid var(--primary); margin-bottom: 3rem; }
+    .cover .logo-band { display: inline-block; background: var(--primary); color: #fff; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; padding: .4rem 1.4rem; border-radius: 2rem; margin-bottom: 1.5rem; }
+    .cover h1 { font-size: 2.4rem; color: var(--primary); line-height: 1.25; }
+    .cover .doc-type { font-size: 1rem; color: var(--secondary); margin: .6rem 0 2rem; }
+    .meta-box { display: inline-grid; grid-template-columns: auto auto; gap: .3rem 1.5rem; text-align: left; background: var(--light); border: 1px solid var(--border); border-radius: .5rem; padding: 1rem 1.5rem; font-size: .92rem; }
+    .meta-box dt { color: var(--secondary); font-weight: 600; }
+    .meta-box dd { color: var(--dark); }
+
+    h2 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: .4rem; margin: 2.8rem 0 1rem; font-size: 1.45rem; }
+    h3 { color: var(--dark); margin: 2rem 0 .7rem; font-size: 1.1rem; }
+    h4 { color: var(--primary); margin: 1.4rem 0 .5rem; font-size: 1rem; }
+    p  { margin-bottom: .9rem; font-size: .97rem; }
+    li { font-size: .97rem; margin-bottom: .4rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: .9rem; }
+
+    code { font-family: monospace; font-size: .88rem; background: #f0f4f8; padding: .1rem .4rem; border-radius: .25rem; }
+
+    .note    { border-left: 5px solid #3b82f6; background: #dbeafe; color: #1e3a5f; padding: .9rem 1.1rem; border-radius: 0 .5rem .5rem 0; margin: 1rem 0; }
+    .tip     { border-left: 5px solid var(--success); background: #dcfce7; color: #14532d; padding: .9rem 1.1rem; border-radius: 0 .5rem .5rem 0; margin: 1rem 0; }
+    .warn    { border-left: 5px solid var(--warning); background: #fef9c3; color: #713f12; padding: .9rem 1.1rem; border-radius: 0 .5rem .5rem 0; margin: 1rem 0; }
+    .danger-box { border-left: 5px solid var(--danger); background: #fee2e2; color: #7f1d1d; padding: .9rem 1.1rem; border-radius: 0 .5rem .5rem 0; margin: 1rem 0; }
+    .note strong, .tip strong, .warn strong, .danger-box strong { display: block; margin-bottom: .3rem; }
+
+    table { width: 100%; border-collapse: collapse; margin: .8rem 0 1.4rem; font-size: .93rem; }
+    th, td { border: 1px solid var(--border); padding: .6rem .85rem; vertical-align: top; }
+    th { background: var(--primary); color: #fff; font-weight: 600; }
+    tr:nth-child(even) { background: var(--light); }
+
+    /* ── Step numbered list ── */
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps li { counter-increment: step; display: flex; gap: 1rem; margin-bottom: 1.1rem; align-items: flex-start; }
+    .steps li::before { content: counter(step); background: var(--primary); color: #fff; min-width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .88rem; flex-shrink: 0; margin-top: .15rem; }
+    .steps li .step-body { flex: 1; }
+    .steps li .step-body strong { display: block; margin-bottom: .2rem; color: var(--primary); }
+
+    /* ── Mock browser UI ── */
+    .mock-browser { border: 1px solid var(--border); border-radius: .6rem; overflow: hidden; margin: 1.2rem 0 1.8rem; box-shadow: 0 2px 14px rgba(0,0,0,.09); }
+    .mock-bar { background: #e8e8e8; padding: .45rem .9rem; display: flex; align-items: center; gap: .5rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; } .dot.y { background: #ffbd2e; } .dot.g { background: #28ca42; }
+    .mock-url { background: #fff; border: 1px solid #ccc; border-radius: 3px; padding: .15rem .6rem; font-size: .77rem; color: #555; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .mock-body { background: #fff; }
+
+    .mock-navbar { background: var(--primary); color: #fff; padding: .55rem 1.2rem; font-size: .84rem; display: flex; align-items: center; justify-content: space-between; }
+    .mock-navbar .brand { font-weight: 700; letter-spacing: .5px; }
+    .mock-navbar .nav-right { font-size: .8rem; opacity: .85; }
+
+    .mock-sidebar { background: #f1f5f9; border-right: 1px solid var(--border); padding: .7rem 0; min-width: 160px; font-size: .82rem; }
+    .mock-sidebar .s-item { padding: .35rem 1.1rem; cursor: default; }
+    .mock-sidebar .s-item.active { background: var(--primary); color: #fff; border-radius: 0 .3rem .3rem 0; }
+    .mock-sidebar .s-group { padding: .25rem 1.1rem; font-size: .73rem; color: var(--secondary); text-transform: uppercase; letter-spacing: .05rem; margin-top: .5rem; }
+
+    .mock-content { padding: 1rem 1.3rem; }
+    .mock-content h6 { font-size: .85rem; color: var(--primary); margin-bottom: .7rem; }
+
+    .mock-layout { display: flex; min-height: 260px; }
+
+    /* Detail view mock */
+    .detail-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .detail-table th { background: #f1f5f9; color: var(--secondary); font-weight: 600; width: 160px; padding: .38rem .8rem; border: 1px solid var(--border); text-align: left; }
+    .detail-table td { border: 1px solid var(--border); padding: .38rem .8rem; }
+
+    /* Badges / buttons */
+    .badge { display: inline-block; padding: .15rem .55rem; font-size: .76rem; font-weight: 600; border-radius: .3rem; color: #fff; }
+    .badge-success { background: var(--success); }
+    .badge-warning { background: var(--warning); color: #000; }
+    .badge-danger  { background: var(--danger); }
+    .badge-pending { background: #6366f1; }
+    .badge-info    { background: #0891b2; }
+
+    .btn-mock { display: inline-block; padding: .3rem .95rem; border-radius: .35rem; font-size: .82rem; font-weight: 600; cursor: default; margin-right: .4rem; }
+    .btn-green  { background: var(--success); color: #fff; }
+    .btn-red    { background: var(--danger); color: #fff; }
+    .btn-blue   { background: var(--primary); color: #fff; }
+
+    /* Grid mock */
+    .mock-grid { width: 100%; border-collapse: collapse; font-size: .81rem; }
+    .mock-grid th { background: #374151; color: #fff; padding: .35rem .65rem; text-align: left; }
+    .mock-grid td { border-bottom: 1px solid #e5e7eb; padding: .32rem .65rem; }
+    .mock-grid tr:last-child td { border-bottom: none; }
+
+    /* Flash alerts */
+    .flash-success { background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; padding: .6rem 1rem; border-radius: .4rem; font-size: .88rem; margin: .5rem 1.2rem; }
+    .flash-warning { background: #fef9c3; border: 1px solid #fde047; color: #713f12; padding: .6rem 1rem; border-radius: .4rem; font-size: .88rem; margin: .5rem 1.2rem; }
+    .flash-danger  { background: #fee2e2; border: 1px solid #fca5a5; color: #7f1d1d; padding: .6rem 1rem; border-radius: .4rem; font-size: .88rem; margin: .5rem 1.2rem; }
+
+    /* TOC */
+    .toc { background: var(--light); border: 1px solid var(--border); border-radius: .5rem; padding: 1.2rem 1.5rem; margin-bottom: 2rem; }
+    .toc h3 { margin-top: 0; color: var(--primary); font-size: 1rem; margin-bottom: .7rem; }
+    .toc ol { margin: 0; padding-left: 1.3rem; }
+    .toc li { font-size: .93rem; margin-bottom: .2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* Flow diagram */
+    .flow { display: flex; flex-wrap: wrap; gap: 0; align-items: center; justify-content: center; margin: 1.5rem 0; }
+    .flow-box { border: 2px solid var(--primary); border-radius: .5rem; background: var(--light); padding: .65rem .9rem; text-align: center; font-size: .82rem; min-width: 100px; }
+    .flow-box.active { background: var(--primary); color: #fff; }
+    .flow-box.done   { background: #d1fae5; border-color: var(--success); }
+    .flow-box.warn   { background: #fef9c3; border-color: var(--warning); }
+    .flow-arrow { font-size: 1.3rem; color: var(--secondary); padding: 0 .25rem; }
+
+    .footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: .82rem; color: var(--secondary); text-align: center; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page-wrap { padding: 0; max-width: 100%; }
+      .cover { page-break-after: always; }
+      h2 { page-break-after: avoid; }
+      .mock-browser, table { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="logo-band">HARGEISA WATER AGENCY</div>
+    <h1>Smart Metering Portal<br>Billing Clerk User Manual</h1>
+    <div class="doc-type">How to Review, Approve, and Post Meter Readings to Billing</div>
+    <dl class="meta-box">
+      <dt>Version</dt>       <dd>1.0</dd>
+      <dt>Date</dt>          <dd>8 July 2026</dd>
+      <dt>Audience</dt>      <dd>Billing Clerks</dd>
+      <dt>Confidentiality</dt><dd>Internal Use Only</dd>
+    </dl>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#c1">What This System Does</a></li>
+      <li><a href="#c2">Logging In</a></li>
+      <li><a href="#c3">The Reading Workflow</a></li>
+      <li><a href="#c4">Reviewing a Single Reading</a></li>
+      <li><a href="#c5">Posting a Single Reading to Billing</a></li>
+      <li><a href="#c6">Bulk Post — Posting All Readings for a Month</a></li>
+      <li><a href="#c7">The 28th Billing Date Policy</a></li>
+      <li><a href="#c8">Understanding Status Messages</a></li>
+      <li><a href="#c9">Reading Values — Liters vs Cubic Meters</a></li>
+      <li><a href="#c10">Common Questions</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2 id="c1">1. What This System Does</h2>
+  <p>
+    The Smart Metering Portal automatically collects water-usage readings from smart meters installed at customer premises. Your job as a billing clerk is to <strong>review those readings, approve the correct ones, and post them to the billing system</strong> so invoices can be generated.
+  </p>
+
+  <div class="flow">
+    <div class="flow-box">📡<br>Meter sends<br>reading</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">🗄️<br>Portal<br>stores it</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box active">👩‍💼<br>You review<br>&amp; approve</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box done">💳<br>Billing<br>system</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box done">🧾<br>Invoice<br>generated</div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <h2 id="c2">2. Logging In</h2>
+  <ol class="steps">
+    <li>
+      <div class="step-body">
+        <strong>Open the billing portal</strong>
+        Go to <code>https://billing.hargeisawatertech.com</code> in your browser.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Enter your credentials</strong>
+        Type your username and password, then click <strong>Sign In</strong>.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>You will see the Billing Dashboard</strong>
+        The dashboard shows recent readings and a summary of posted, pending, and failed records.
+      </div>
+    </li>
+  </ol>
+
+  <!-- Mock: portal login bar -->
+  <div class="mock-browser">
+    <div class="mock-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="mock-url">https://billing.hargeisawatertech.com</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-navbar">
+        <div class="brand">HWA Smart Metering</div>
+        <div class="mock-right" style="font-size:.8rem;opacity:.85">Billing Clerk ▾</div>
+      </div>
+      <div class="mock-layout">
+        <div class="mock-sidebar">
+          <div class="s-group">Billing</div>
+          <div class="s-item active">📊 Dashboard</div>
+          <div class="s-item">📋 Readings</div>
+          <div class="s-item">📁 Reports</div>
+          <div class="s-item">⚠️ Alarms</div>
+        </div>
+        <div class="mock-content" style="flex:1">
+          <h6>Recent Readings</h6>
+          <table class="mock-grid">
+            <thead><tr><th>Dev EUI</th><th>Supply No</th><th>Reading (m³)</th><th>Time</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>03280830</td><td>J - 28 - 380</td><td>100.621 m³</td><td>Jul 8, 2026</td><td><span class="badge badge-success">Posted</span></td></tr>
+              <tr><td>04110922</td><td>A - 10 - 229</td><td>101.825 m³</td><td>Jul 7, 2026</td><td><span class="badge badge-pending">Pending</span></td></tr>
+              <tr><td>07654312</td><td>B - 05 - 112</td><td>52.789 m³</td><td>Jul 7, 2026</td><td><span class="badge badge-pending">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <h2 id="c3">3. The Reading Workflow</h2>
+  <p>Every reading goes through the following statuses:</p>
+  <table>
+    <thead><tr><th>Status</th><th>Meaning</th><th>Action Required</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-pending">Pending</span></td><td>Reading received but not yet reviewed</td><td>Review and either <strong>Post</strong> or <strong>Reject</strong></td></tr>
+      <tr><td><span class="badge badge-success">Posted</span></td><td>Successfully sent to billing</td><td>None — invoice will be generated</td></tr>
+      <tr><td><span class="badge badge-warning">Queued</span></td><td>Approved but billing server temporarily unavailable; will retry automatically</td><td>Check back later; no manual action needed</td></tr>
+      <tr><td><span class="badge badge-danger">Rejected</span></td><td>Clerk rejected the reading (e.g., abnormal value)</td><td>Contact field team to re-check meter</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4 -->
+  <h2 id="c4">4. Reviewing a Single Reading</h2>
+  <ol class="steps">
+    <li>
+      <div class="step-body">
+        <strong>Go to Readings</strong>
+        Click <strong>Readings</strong> in the left sidebar.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Find the reading</strong>
+        Use the search filters (Supply No, date range) to locate the reading you want to review.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Click the reading ID</strong>
+        This opens the detail view showing all information about the reading.
+      </div>
+    </li>
+  </ol>
+
+  <!-- Mock: detail view -->
+  <div class="mock-browser">
+    <div class="mock-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="mock-url">https://billing.hargeisawatertech.com/billing/readings/view?id=65500</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-navbar"><div class="brand">HWA Smart Metering</div></div>
+      <div class="mock-content">
+        <h6>Reading #65500</h6>
+        <table class="detail-table" style="margin-bottom:.8rem">
+          <tr><th>Id</th><td>65500</td></tr>
+          <tr><th>Dev EUI</th><td>03280830</td></tr>
+          <tr><th>Supply No</th><td>J - 28 - 380</td></tr>
+          <tr><th>Reading Value</th><td><strong>100.621 m³</strong></td></tr>
+          <tr><th>Reading Time</th><td>Jul 8, 2026, 12:08:09 AM</td></tr>
+          <tr><th>Source</th><td>rest-sync</td></tr>
+          <tr><th>Status</th><td><span class="badge badge-pending">Pending</span></td></tr>
+          <tr><th>Created At</th><td>Jul 8, 2026, 12:12:27 AM</td></tr>
+        </table>
+        <span class="btn-mock btn-green">Post Reading</span>
+        <span class="btn-mock btn-red" style="background:transparent;border:1px solid var(--danger);color:var(--danger)">Reject</span>
+      </div>
+    </div>
+  </div>
+
+  <p><strong>What to check before posting:</strong></p>
+  <ul>
+    <li>The <strong>Supply No</strong> matches the customer's account number.</li>
+    <li>The <strong>Reading Value</strong> is reasonable (not zero, not abnormally high).</li>
+    <li>The <strong>Reading Time</strong> is within the current billing month.</li>
+  </ul>
+
+  <!-- SECTION 5 -->
+  <h2 id="c5">5. Posting a Single Reading to Billing</h2>
+  <ol class="steps">
+    <li>
+      <div class="step-body">
+        <strong>Open the reading detail page</strong>
+        Navigate to Readings → click the reading ID.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Click "Post Reading"</strong>
+        A confirmation dialog appears: <em>"Post this reading to billing?"</em>
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Click OK to confirm</strong>
+        The system sends the reading to the billing server using the <strong>28th of the reading's month</strong> as the billing date (see Section 7).
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Check the result message</strong>
+        A green or yellow banner appears at the top of the page.
+      </div>
+    </li>
+  </ol>
+
+  <!-- Mock: success flash -->
+  <div class="mock-browser">
+    <div class="mock-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="mock-url">https://billing.hargeisawatertech.com/billing/readings/view?id=65500</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-navbar"><div class="brand">HWA Smart Metering</div></div>
+      <div style="padding:.5rem .5rem 0">
+        <div class="flash-success">✔ Reading posted to billing. Successfully posted meter reading.</div>
+      </div>
+      <div class="mock-content">
+        <table class="detail-table">
+          <tr><th>Status</th><td><span class="badge badge-success">Posted</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>If you see a yellow warning instead of green:</strong>
+    The reading was approved and saved, but the billing server was temporarily unavailable. The system will retry automatically — you do not need to post again.
+  </div>
+
+  <!-- SECTION 6 -->
+  <h2 id="c6">6. Bulk Post — Posting All Readings for a Month</h2>
+  <p>
+    At the end of each billing cycle, use the <strong>Post to Billing</strong> bulk action to post all approved readings for a given month at once.
+  </p>
+  <ol class="steps">
+    <li>
+      <div class="step-body">
+        <strong>Go to Readings → Bulk Actions</strong>
+        Look for the <strong>"Post to Billing"</strong> button or form at the top of the Readings list.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Select the billing month</strong>
+        Choose the year and month (e.g., <code>2026-07</code>). The system will use the 28th of that month as the billing date.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Click "Post to Billing"</strong>
+        The system processes each meter's latest reading on or before the 28th.
+      </div>
+    </li>
+    <li>
+      <div class="step-body">
+        <strong>Review the summary message</strong>
+        You will see how many readings were posted, failed, or skipped.
+      </div>
+    </li>
+  </ol>
+
+  <!-- Mock: bulk post result -->
+  <div class="mock-browser">
+    <div class="mock-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="mock-url">https://billing.hargeisawatertech.com/billing/readings</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-navbar"><div class="brand">HWA Smart Metering</div></div>
+      <div style="padding:.5rem .5rem 0">
+        <div class="flash-success">✔ 47 reading(s) posted for 2026-07-28, 3 skipped.</div>
+      </div>
+      <div class="mock-content">
+        <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.8rem;flex-wrap:wrap">
+          <span style="font-size:.85rem;font-weight:600;color:var(--secondary)">Post readings for month:</span>
+          <span style="border:1px solid #ccc;border-radius:.3rem;padding:.25rem .65rem;font-size:.83rem;background:#fff">2026-07</span>
+          <span class="btn-mock btn-blue" style="font-size:.82rem">Post to Billing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4>What "skipped" means</h4>
+  <ul>
+    <li>The reading is <strong>zero</strong> — zero readings are never sent to billing.</li>
+    <li>The reading was <strong>already posted</strong> for this supply in a previous run.</li>
+  </ul>
+
+  <!-- SECTION 7 -->
+  <h2 id="c7">7. The 28th Billing Date Policy</h2>
+  <div class="tip">
+    <strong>Company Policy</strong>
+    HWA uses the <strong>28th of each month</strong> as the official billing date for all meter readings. This applies whether you post a single reading or run the bulk post.
+  </div>
+
+  <p>What this means in practice:</p>
+  <table>
+    <thead><tr><th>Situation</th><th>What the system does</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Reading was taken <em>on</em> the 28th</td>
+        <td>Posted with date <code>2026-07-28</code>. No note added.</td>
+      </tr>
+      <tr>
+        <td>Reading was taken on a <em>different day</em> (e.g. the 7th)</td>
+        <td>Posted with date <code>2026-07-28</code>. A description note is added: <em>"No reading on 2026-07-28; used last available reading from 2026-07-07."</em></td>
+      </tr>
+      <tr>
+        <td>No reading exists on or before the 28th</td>
+        <td>The reading is skipped for that month's bulk post.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>You do not need to do anything special.</strong>
+    The 28th billing date is applied automatically — you just click "Post Reading" or "Post to Billing" as usual.
+  </div>
+
+  <!-- SECTION 8 -->
+  <h2 id="c8">8. Understanding Status Messages</h2>
+  <table>
+    <thead><tr><th>Message</th><th>Meaning</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>✔ <em>Reading posted to billing. Successfully posted meter reading.</em></td>
+        <td>The billing server accepted the reading and will generate an invoice.</td>
+        <td>None required.</td>
+      </tr>
+      <tr>
+        <td>✔ <em>X reading(s) posted for 2026-07-28, Y skipped.</em></td>
+        <td>Bulk post succeeded. Y readings were skipped (zero or already posted).</td>
+        <td>None required.</td>
+      </tr>
+      <tr>
+        <td>⚠ <em>Reading approved, but the billing push failed and will be retried.</em></td>
+        <td>The reading was saved locally. The billing server was temporarily unavailable. The system will retry.</td>
+        <td>Wait and check again later. Do <strong>not</strong> post again.</td>
+      </tr>
+      <tr>
+        <td>⚠ <em>X posted, Y failed (queued for retry), Z skipped.</em></td>
+        <td>Partial success in bulk post. Failed readings will be retried.</td>
+        <td>Inform your system administrator.</td>
+      </tr>
+      <tr>
+        <td>✖ <em>Zero reading; not posted to billing.</em></td>
+        <td>The meter reported 0 m³. Zero readings are never sent to billing.</td>
+        <td>Contact field team to check the meter on-site.</td>
+      </tr>
+      <tr>
+        <td>✖ <em>Reading has no supply number.</em></td>
+        <td>The meter has not been assigned a supply number.</td>
+        <td>Ask the system administrator to assign the supply number to this meter.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 9 -->
+  <h2 id="c9">9. Reading Values — Liters vs Cubic Meters</h2>
+  <p>
+    Smart meters transmit their readings in <strong>liters</strong> internally. The portal automatically converts and displays all values in <strong>cubic meters (m³)</strong> for your convenience.
+  </p>
+  <table>
+    <thead><tr><th>Raw value (liters)</th><th>Displayed as (m³)</th></tr></thead>
+    <tbody>
+      <tr><td>100,621</td><td>100.621 m³</td></tr>
+      <tr><td>52,789</td><td>52.789 m³</td></tr>
+      <tr><td>1,500</td><td>1.500 m³</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>The billing server also receives the value in cubic meters (rounded down to a whole number).</strong>
+    For example, 100.621 m³ is sent to billing as <strong>100 m³</strong>. This is correct and matches HWA's billing formula.
+  </div>
+
+  <!-- SECTION 10 -->
+  <h2 id="c10">10. Common Questions</h2>
+
+  <h4>Can I post the same reading twice?</h4>
+  <p>No. The system checks for duplicates automatically. If a reading for a supply number has already been posted this month, it will be skipped and you will see a <em>"skipped"</em> count in the bulk post summary.</p>
+
+  <h4>What happens if I accidentally reject a reading?</h4>
+  <p>Once rejected, the reading cannot be re-posted from the portal. Contact your system administrator to reverse the status in the database.</p>
+
+  <h4>Why does the system show a yellow warning after I post?</h4>
+  <p>The reading was approved and saved, but the billing server was temporarily unavailable. The system retries automatically. You do <strong>not</strong> need to post again — doing so will create a duplicate.</p>
+
+  <h4>What does "already posted for this supply" mean?</h4>
+  <p>The billing server already has a reading for this meter and month. This is normal if you run the bulk post more than once in the same month. The reading is counted as "skipped" — no action needed.</p>
+
+  <h4>The reading value looks very different from what the field team reported. What should I do?</h4>
+  <p>Click <strong>Reject</strong> on that reading and note the reason. Then notify your supervisor and the field team to verify the meter on-site. Do not post a reading you believe is incorrect.</p>
+
+  <h4>I posted a reading but no invoice appeared in the billing system. What do I do?</h4>
+  <p>Check the reading's status in the portal. If it shows <strong>Posted</strong> (green), the data has been sent — the invoice should appear in the billing system within a few minutes. If it still shows <strong>Pending</strong> or shows a warning, contact your system administrator.</p>
+
+  <div class="footer">
+    Hargeisa Water Agency · Smart Metering Portal · Billing Clerk Manual v1.0 · July 2026<br>
+    Generated with Devin
+  </div>
+</div>
+</body>
+</html>

@@ -240,6 +240,16 @@ class ReadingsController extends BaseController
 
         $readingDate = date('Y-m-d', strtotime($model->reading_time));
 
+        // Company policy: always bill on the 28th of the reading's month.
+        // If the reading was taken on a different day, attach a description
+        // noting the actual reading date (same logic as the bulk action).
+        $billingDate = date('Y-m', strtotime($model->reading_time)) . '-28';
+        $description = null;
+        if ($readingDate !== $billingDate) {
+            $description = 'No reading on ' . $billingDate
+                . '; used last available reading from ' . $readingDate . '.';
+        }
+
         // Create the ledger entry (clerk approval record)
         $previous = BillingLedger::find()
             ->where(['supply_no' => $supplyNo])
@@ -253,7 +263,7 @@ class ReadingsController extends BaseController
         $ledger->previous_reading = $previous ? $previous->current_reading : null;
         $ledger->current_reading = $readingLiters;
         $ledger->consumption = $previous ? max(0, $readingLiters - (float) $previous->current_reading) : null;
-        $ledger->reading_date = $readingDate;
+        $ledger->reading_date = $billingDate;
         $ledger->imported_by = Yii::$app->user->id;
         $ledger->imported_at = date('Y-m-d H:i:s');
 
@@ -262,8 +272,8 @@ class ReadingsController extends BaseController
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        // Push to the core billing server
-        $result = $client->postMeterReading($supplyNo, $readingLiters, $readingDate);
+        // Push to the core billing server using the 28th as the billing date
+        $result = $client->postMeterReading($supplyNo, $readingLiters, $billingDate, $description);
 
         $ledger->push_status = $result['reason'] ?: ($result['success'] ? 'pushed' : 'failed');
         $ledger->pushed_at = $result['success'] ? date('Y-m-d H:i:s') : null;

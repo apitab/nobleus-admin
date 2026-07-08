@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HWA Smart Metering — System Administrator Manual</title>
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --secondary: #6c757d;
+      --success: #198754;
+      --warning: #e6a817;
+      --danger: #dc3545;
+      --light: #f8f9fa;
+      --border: #dee2e6;
+      --code-bg: #f4f6f9;
+      --dark: #212529;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Roboto, Arial, sans-serif; color: var(--dark); background: #fff; line-height: 1.7; }
+    .page-wrap { max-width: 980px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+    /* ── Cover ── */
+    .cover { text-align: center; padding: 4rem 2rem 3rem; border-bottom: 4px solid var(--primary); margin-bottom: 3rem; }
+    .cover .logo-band { display: inline-block; background: var(--primary); color: #fff; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; padding: .4rem 1.4rem; border-radius: 2rem; margin-bottom: 1.5rem; }
+    .cover h1 { font-size: 2.4rem; color: var(--primary); line-height: 1.25; }
+    .cover .doc-type { font-size: 1rem; color: var(--secondary); margin: .6rem 0 2rem; }
+    .meta-box { display: inline-grid; grid-template-columns: auto auto; gap: .3rem 1.5rem; text-align: left; background: var(--light); border: 1px solid var(--border); border-radius: .5rem; padding: 1rem 1.5rem; font-size: .92rem; }
+    .meta-box dt { color: var(--secondary); font-weight: 600; }
+    .meta-box dd { color: var(--dark); }
+
+    /* ── Headings ── */
+    h2 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: .4rem; margin: 2.8rem 0 1rem; font-size: 1.45rem; }
+    h3 { color: var(--dark); margin: 2rem 0 .7rem; font-size: 1.1rem; }
+    h4 { color: var(--primary); margin: 1.4rem 0 .5rem; font-size: 1rem; }
+    p  { margin-bottom: .9rem; font-size: .97rem; }
+    li { font-size: .97rem; margin-bottom: .3rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: .9rem; }
+
+    /* ── Code / Pre ── */
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .87rem; background: var(--code-bg); padding: .15rem .4rem; border-radius: .25rem; }
+    pre  { background: #1e1e2e; color: #cdd6f4; font-family: "SFMono-Regular", Consolas, monospace; font-size: .86rem; padding: 1.1rem 1.3rem; border-radius: .5rem; overflow-x: auto; margin: .8rem 0 1.2rem; line-height: 1.55; }
+    pre .c { color: #6c7086; }   /* comment */
+    pre .k { color: #cba6f7; }   /* keyword */
+    pre .s { color: #a6e3a1; }   /* string */
+    pre .v { color: #89dceb; }   /* variable */
+
+    /* ── Callout boxes ── */
+    .note, .warn, .tip, .danger-box {
+      border-left: 5px solid; padding: .9rem 1.1rem; border-radius: 0 .5rem .5rem 0; margin: 1.1rem 0;
+    }
+    .note    { background: #dbeafe; border-color: #3b82f6; color: #1e3a5f; }
+    .warn    { background: #fef9c3; border-color: var(--warning); color: #713f12; }
+    .tip     { background: #dcfce7; border-color: var(--success); color: #14532d; }
+    .danger-box { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
+    .note strong, .warn strong, .tip strong, .danger-box strong { display: block; margin-bottom: .3rem; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; margin: .8rem 0 1.4rem; font-size: .93rem; }
+    th, td { border: 1px solid var(--border); padding: .6rem .85rem; vertical-align: top; }
+    th { background: var(--primary); color: #fff; font-weight: 600; }
+    tr:nth-child(even) { background: var(--light); }
+
+    /* ── Mock UI screenshots (CSS-drawn) ── */
+    .mock-browser { border: 1px solid var(--border); border-radius: .6rem; overflow: hidden; margin: 1.2rem 0; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    .mock-browser .bar { background: #e8e8e8; padding: .45rem .9rem; display: flex; align-items: center; gap: .5rem; }
+    .mock-browser .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mock-browser .dot.r { background: #ff5f57; }
+    .mock-browser .dot.y { background: #ffbd2e; }
+    .mock-browser .dot.g { background: #28ca42; }
+    .mock-browser .url { background: #fff; border: 1px solid #ccc; border-radius: 3px; padding: .15rem .6rem; font-size: .78rem; color: #555; flex: 1; }
+    .mock-browser .body { background: #fff; padding: 0; }
+
+    .mock-navbar { background: var(--primary); color: #fff; padding: .6rem 1.2rem; font-size: .85rem; display: flex; align-items: center; justify-content: space-between; }
+    .mock-navbar .brand { font-weight: 700; letter-spacing: 1px; }
+    .mock-navbar .nav-items span { margin-left: 1.2rem; opacity: .85; font-size: .82rem; }
+
+    .mock-card { background: #f9fafb; border: 1px solid var(--border); border-radius: .4rem; padding: 1rem 1.2rem; margin: .8rem 1.2rem; font-size: .86rem; }
+    .mock-card h5 { font-size: .88rem; color: var(--primary); margin-bottom: .5rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+    .mock-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .mock-table th { background: var(--primary); color: #fff; padding: .3rem .6rem; text-align: left; }
+    .mock-table td { border-bottom: 1px solid #e9ecef; padding: .28rem .6rem; }
+    .mock-table tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: .15rem .5rem; font-size: .75rem; font-weight: 600; border-radius: .3rem; color: #fff; }
+    .badge-success { background: var(--success); }
+    .badge-warning { background: var(--warning); color: #000; }
+    .badge-danger  { background: var(--danger); }
+    .badge-info    { background: #0891b2; }
+    .btn-mock { display: inline-block; padding: .3rem .9rem; border-radius: .35rem; font-size: .82rem; font-weight: 600; cursor: default; }
+    .btn-primary-mock { background: var(--primary); color: #fff; }
+    .btn-success-mock { background: var(--success); color: #fff; }
+    .btn-danger-mock  { background: var(--danger); color: #fff; border: 1px solid var(--danger); }
+    .form-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; padding: .6rem 1.2rem; }
+    .form-input { border: 1px solid #ccc; border-radius: .3rem; padding: .28rem .7rem; font-size: .82rem; color: #333; background: #fff; }
+
+    /* ── Architecture diagram ── */
+    .arch { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; margin: 1.5rem 0; }
+    .arch-box { background: var(--light); border: 2px solid var(--primary); border-radius: .5rem; padding: .8rem 1rem; text-align: center; font-size: .82rem; min-width: 110px; }
+    .arch-box.ext { border-color: var(--warning); background: #fffbeb; }
+    .arch-box.db  { border-color: var(--success); background: #f0fdf4; }
+    .arch-box span { display: block; font-size: 1.6rem; }
+    .arch-arrow { font-size: 1.5rem; color: var(--secondary); padding: 0 .3rem; }
+
+    /* ── Table of contents ── */
+    .toc { background: var(--light); border: 1px solid var(--border); border-radius: .5rem; padding: 1.2rem 1.5rem; margin-bottom: 2rem; }
+    .toc h3 { margin-top: 0; color: var(--primary); font-size: 1rem; margin-bottom: .7rem; }
+    .toc ol { margin: 0; padding-left: 1.3rem; }
+    .toc li { font-size: .93rem; margin-bottom: .2rem; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Step list ── */
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps li { counter-increment: step; display: flex; gap: 1rem; margin-bottom: 1rem; }
+    .steps li::before { content: counter(step); background: var(--primary); color: #fff; min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; flex-shrink: 0; margin-top: .1rem; }
+
+    /* ── Footer ── */
+    .footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: .82rem; color: var(--secondary); text-align: center; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page-wrap { padding: 0; max-width: 100%; }
+      .cover { page-break-after: always; }
+      h2 { page-break-after: avoid; }
+      pre, table, .mock-browser { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="logo-band">HARGEISA WATER AGENCY</div>
+    <h1>Smart Metering Portal<br>System Administrator Manual</h1>
+    <div class="doc-type">Infrastructure · Deployment · Maintenance</div>
+    <dl class="meta-box">
+      <dt>Version</dt>       <dd>1.0</dd>
+      <dt>Date</dt>          <dd>8 July 2026</dd>
+      <dt>Audience</dt>      <dd>System Administrators / DevOps</dd>
+      <dt>Confidentiality</dt><dd>Internal Use Only</dd>
+    </dl>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#s1">System Overview</a></li>
+      <li><a href="#s2">Architecture</a></li>
+      <li><a href="#s3">Server Requirements</a></li>
+      <li><a href="#s4">Environment Variables (.env)</a></li>
+      <li><a href="#s5">Apache Virtual Hosts</a></li>
+      <li><a href="#s6">Database</a></li>
+      <li><a href="#s7">Billing Date Policy (28th Rule)</a></li>
+      <li><a href="#s8">Deployment &amp; Upgrade</a></li>
+      <li><a href="#s9">Logs &amp; Monitoring</a></li>
+      <li><a href="#s10">Troubleshooting Reference</a></li>
+      <li><a href="#s11">Security Checklist</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2 id="s1">1. System Overview</h2>
+  <p>
+    The HWA Smart Metering Portal is a Yii 2 PHP web application hosted on AWS. It receives IoT water-meter readings via a ThingsBoard webhook, allows billing clerks to review and approve readings, and pushes approved readings to the core billing server (<strong>reading.hargeisawatertech.com</strong>) for invoice generation.
+  </p>
+  <table>
+    <thead><tr><th>Domain</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>portal.hargeisawatertech.com</code></td><td>Full admin/clerk portal (all modules)</td></tr>
+      <tr><td><code>billing.hargeisawatertech.com</code></td><td>Billing module only (restricted access)</td></tr>
+      <tr><td><code>api.hargeisawatertech.com</code></td><td>REST API for ThingsBoard &amp; mobile apps</td></tr>
+      <tr><td><code>reading.hargeisawatertech.com</code></td><td>External HWA Core Billing API (remote)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 2 -->
+  <h2 id="s2">2. Architecture</h2>
+
+  <div class="arch">
+    <div class="arch-box"><span>📡</span>ThingsBoard<br>(IoT meters)</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><span>🌐</span>Nobleus Portal<br>(AWS EC2)</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box ext"><span>💳</span>Core Billing API<br>(reading.hargeisawatertech.com)</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box db"><span>🗄️</span>HWA PostgreSQL<br>(on-premise)</div>
+  </div>
+
+  <ul>
+    <li>ThingsBoard pushes telemetry via REST webhook to <code>api.hargeisawatertech.com</code>.</li>
+    <li>The portal stores raw readings in its local MySQL database (<code>nobleus</code>).</li>
+    <li>Billing clerks review and approve readings on the portal.</li>
+    <li>Approved readings are pushed to <code>reading.hargeisawatertech.com/bill/api/meter-reading</code>.</li>
+    <li>The core billing server writes invoices to the on-premise PostgreSQL database.</li>
+  </ul>
+
+  <!-- SECTION 3 -->
+  <h2 id="s3">3. Server Requirements</h2>
+  <table>
+    <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
+    <tbody>
+      <tr><td>OS</td><td>Ubuntu 22.04 LTS (Jammy) or later</td></tr>
+      <tr><td>Web Server</td><td>Apache 2.4 with <code>mod_rewrite</code>, <code>mod_ssl</code></td></tr>
+      <tr><td>PHP</td><td>8.1 or 8.3 with extensions: <code>pdo_mysql</code>, <code>curl</code>, <code>mbstring</code>, <code>intl</code>, <code>gd</code>, <code>zip</code></td></tr>
+      <tr><td>Database</td><td>MySQL 8.0 (local), PostgreSQL 10+ (remote — core billing)</td></tr>
+      <tr><td>Composer</td><td>2.x</td></tr>
+      <tr><td>Git</td><td>2.x</td></tr>
+      <tr><td>SSL</td><td>Let's Encrypt via Certbot</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4 -->
+  <h2 id="s4">4. Environment Variables (.env)</h2>
+  <p>All secrets and environment-specific values live in <code>/home/admin/nobleus-admin/.env</code>. This file is excluded from Git.</p>
+
+  <pre><code><span class="c"># ── Database (local MySQL) ──────────────────────────</span>
+<span class="v">DB_HOST</span>=localhost
+<span class="v">DB_PORT</span>=3306
+<span class="v">DB_NAME</span>=nobleus
+<span class="v">DB_USER</span>=nobleus
+<span class="v">DB_PASSWORD</span>=your_secure_password
+
+<span class="c"># ── ThingsBoard ──────────────────────────────────────</span>
+<span class="v">TB_WEBHOOK_TOKEN</span>=865e23dd298796...    <span class="c"># webhook shared secret</span>
+<span class="v">TB_URL</span>=https://hwa-smartmetering-app.com
+<span class="v">TB_USERNAME</span>=tenant@hargeisawateragency.com
+<span class="v">TB_PASSWORD</span>=tenant
+<span class="v">TB_TELEMETRY_KEY</span>=absoluteMeterReading_liters
+
+<span class="c"># ── Canonical Domains ────────────────────────────────</span>
+<span class="v">BILLING_PORTAL_URL</span>=https://billing.hargeisawatertech.com
+<span class="v">PORTAL_URL</span>=https://portal.hargeisawatertech.com
+<span class="v">API_BASE_URL</span>=https://api.hargeisawatertech.com
+
+<span class="c"># ── Core Billing API (remote) ────────────────────────</span>
+<span class="v">CORE_READING_API_URL</span>=https://reading.hargeisawatertech.com
+<span class="v">CORE_METERS_API_URL</span>=https://meters.hargeisawatertech.com
+<span class="v">CORE_API_TOKEN</span>=eyJ0eXAiOiJKV1Q...   <span class="c"># JWT service token</span>
+
+<span class="c"># ── Optional: disable SSL verify during cert issues ──</span>
+<span class="c"># CORE_API_INSECURE_SSL=1</span></code></pre>
+
+  <div class="warn"><strong>Warning</strong> Never commit <code>.env</code> to Git. Rotate <code>CORE_API_TOKEN</code> and <code>TB_WEBHOOK_TOKEN</code> immediately if exposed.</div>
+
+  <!-- SECTION 5 -->
+  <h2 id="s5">5. Apache Virtual Hosts</h2>
+  <p>Config files live in <code>/etc/apache2/sites-available/</code>. Enable with <code>a2ensite</code>.</p>
+  <table>
+    <thead><tr><th>File</th><th>Domain</th><th>Document Root</th></tr></thead>
+    <tbody>
+      <tr><td><code>portal.hargeisawatertech.com-le-ssl.conf</code></td><td>portal domain</td><td><code>backend/web</code></td></tr>
+      <tr><td><code>nobleus-ssl.conf</code></td><td>billing domain</td><td><code>backend/web</code></td></tr>
+      <tr><td><code>api.hargeisawatertech.com.conf</code></td><td>API domain</td><td><code>api/web</code></td></tr>
+      <tr><td><code>000-catch-all.conf</code></td><td>bare IP / unknown host</td><td>returns 403</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Reload Apache after config changes</h4>
+  <pre><code>sudo systemctl reload apache2</code></pre>
+
+  <h4>Renew SSL certificates</h4>
+  <pre><code>sudo certbot renew --dry-run      <span class="c"># test first</span>
+sudo certbot renew                <span class="c"># apply</span>
+sudo systemctl reload apache2</code></pre>
+
+  <!-- SECTION 6 -->
+  <h2 id="s6">6. Database</h2>
+  <h3>6.1 Local MySQL (nobleus)</h3>
+  <table>
+    <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>meter_reading_raw</code></td><td>Raw IoT readings (liters) from ThingsBoard</td></tr>
+      <tr><td><code>billing_ledger</code></td><td>Clerk-approved readings with push status</td></tr>
+      <tr><td><code>billing_audit_logs</code></td><td>Audit trail for all import/push actions</td></tr>
+      <tr><td><code>meters</code></td><td>Physical meter registry</td></tr>
+      <tr><td><code>meter_assignments</code></td><td>Links meters to supply numbers</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Run migrations</h4>
+  <pre><code>cd /home/admin/nobleus-admin
+php yii migrate</code></pre>
+
+  <h4>Check push queue</h4>
+  <pre><code>mysql -u nobleus -p -D nobleus -e \
+  "SELECT id, supply_no, push_status, pushed_at
+   FROM billing_ledger
+   WHERE push_status = 'failed'
+   ORDER BY id DESC LIMIT 20;"</code></pre>
+
+  <h3>6.2 Remote PostgreSQL (HWA Core Billing)</h3>
+  <ul>
+    <li>Host: <code>102.218.58.66</code> port <code>5432</code> (FortiGate VIP → <code>10.10.50.120</code>)</li>
+    <li>Database: <code>HWA_DATA</code> &nbsp;|&nbsp; User: <code>openpg</code></li>
+    <li>If the connection fails, readings queue locally and retry when the remote DB is restored.</li>
+  </ul>
+
+  <h4>Verify remote DB reachability</h4>
+  <pre><code>nc -vz 102.218.58.66 5432           <span class="c"># TCP test</span>
+psql -h 102.218.58.66 -U openpg -d HWA_DATA -c "SELECT version();"</code></pre>
+
+  <!-- SECTION 7 -->
+  <h2 id="s7">7. Billing Date Policy (28th Rule)</h2>
+  <div class="tip">
+    <strong>Company Policy</strong>
+    All meter readings posted to the core billing server use <strong>the 28th of the reading's month</strong> as the official billing date, regardless of when the reading was physically taken.
+  </div>
+  <p>This policy is enforced in code in two places:</p>
+  <ul>
+    <li><strong>Bulk post</strong> (<code>actionPostToBilling</code>) — uses <code>$month . '-28'</code> as the target date.</li>
+    <li><strong>Single post</strong> (<code>actionImport</code>) — derives <code>date('Y-m', ...) . '-28'</code> from the reading's timestamp.</li>
+  </ul>
+  <p>
+    If the reading was taken on a different day (e.g., the 7th), a <code>description</code> field is automatically appended to the API payload noting the actual reading date. This note appears in the core billing system for auditors.
+  </p>
+
+  <!-- SECTION 8 -->
+  <h2 id="s8">8. Deployment &amp; Upgrade</h2>
+  <h3>8.1 First-time setup</h3>
+  <ol class="steps">
+    <li>Clone the repository: <code>git clone git@github.com:apitab/nobleus-admin.git /home/admin/nobleus-admin</code></li>
+    <li>Copy and edit the environment file: <code>cp .env.example .env && nano .env</code></li>
+    <li>Install PHP dependencies: <code>composer install --no-dev --optimize-autoloader</code></li>
+    <li>Run database migrations: <code>php yii migrate</code></li>
+    <li>Set web directory permissions: <code>chmod -R 775 backend/web/assets backend/runtime common/runtime</code></li>
+    <li>Enable Apache vhosts and reload: <code>a2ensite portal.hargeisawatertech.com-le-ssl.conf nobleus-ssl.conf api.hargeisawatertech.com.conf && sudo systemctl reload apache2</code></li>
+  </ol>
+
+  <h3>8.2 Code upgrade</h3>
+  <pre><code>cd /home/admin/nobleus-admin
+git pull origin main
+composer install --no-dev --optimize-autoloader
+php yii migrate                <span class="c"># apply any new migrations</span>
+sudo systemctl reload apache2  <span class="c"># reload Apache (view changes take effect immediately)</span></code></pre>
+
+  <div class="note"><strong>Note</strong> PHP view files take effect on the next page load without a restart. Only Apache config changes require <code>reload</code>.</div>
+
+  <!-- SECTION 9 -->
+  <h2 id="s9">9. Logs &amp; Monitoring</h2>
+  <table>
+    <thead><tr><th>Log</th><th>Location</th></tr></thead>
+    <tbody>
+      <tr><td>Apache access</td><td><code>/var/log/apache2/portal-access.log</code></td></tr>
+      <tr><td>Apache error</td><td><code>/var/log/apache2/portal-error.log</code></td></tr>
+      <tr><td>Application (Yii)</td><td><code>/home/admin/nobleus-admin/backend/runtime/logs/app.log</code></td></tr>
+      <tr><td>Catch-all requests</td><td><code>/var/log/apache2/catchall-error.log</code></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Tail application errors in real time</h4>
+  <pre><code>tail -f /home/admin/nobleus-admin/backend/runtime/logs/app.log</code></pre>
+
+  <h4>Check failed billing pushes in audit log</h4>
+  <pre><code>mysql -u nobleus -p -D nobleus -e \
+  "SELECT id, action, supply_no, details, created_at
+   FROM billing_audit_logs
+   WHERE action LIKE '%failed%'
+   ORDER BY id DESC LIMIT 20;"</code></pre>
+
+  <!-- SECTION 10 -->
+  <h2 id="s10">10. Troubleshooting Reference</h2>
+  <table>
+    <thead><tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Push status stays <code>failed</code></td>
+        <td>Remote billing DB unreachable</td>
+        <td>Check <code>nc -vz 102.218.58.66 5432</code>; contact remote DB admin; run retry command once restored</td>
+      </tr>
+      <tr>
+        <td>Apache shows SSL cert error on reload</td>
+        <td>Let's Encrypt cert missing or expired</td>
+        <td><code>sudo certbot renew && sudo systemctl reload apache2</code></td>
+      </tr>
+      <tr>
+        <td>504 Gateway Timeout on bulk post</td>
+        <td>Remote API too slow / many meters</td>
+        <td>Increase <code>CURLOPT_TIMEOUT</code> in <code>CoreBillingClient.php</code>; run in smaller month batches</td>
+      </tr>
+      <tr>
+        <td>Readings not appearing in portal</td>
+        <td>ThingsBoard webhook failing</td>
+        <td>Check <code>TB_WEBHOOK_TOKEN</code> in <code>.env</code>; verify ThingsBoard rule-chain target URL</td>
+      </tr>
+      <tr>
+        <td>Zero readings in ledger</td>
+        <td>Meter transmitting 0 liters</td>
+        <td>Check meter on-site; zero readings are intentionally skipped and never posted to billing</td>
+      </tr>
+      <tr>
+        <td><code>billing_audit_logs</code> empty</td>
+        <td>Table missing (old install)</td>
+        <td>Run <code>php yii migrate</code> to create the table</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 11 -->
+  <h2 id="s11">11. Security Checklist</h2>
+  <ul>
+    <li>Rotate <code>CORE_API_TOKEN</code> every 6 months or after any staff departure.</li>
+    <li>Rotate <code>TB_WEBHOOK_TOKEN</code> every 6 months.</li>
+    <li>Keep <code>.env</code> permissions to <code>640</code> (owner read/write, group read only).</li>
+    <li>Ensure <code>YII_DEBUG=false</code> and <code>YII_ENV=prod</code> in production <code>index.php</code>.</li>
+    <li>SSL certificates must not expire — set up auto-renewal cron: <code>0 3 * * * certbot renew --quiet</code>.</li>
+    <li>Restrict MySQL user <code>nobleus</code> to <code>localhost</code> only.</li>
+    <li>The catch-all Apache vhost blocks all bare-IP access — do not disable it.</li>
+    <li>Enable AWS Security Group rules: allow 80, 443 inbound; restrict 22 (SSH) to trusted IPs.</li>
+  </ul>
+
+  <div class="footer">
+    Hargeisa Water Agency · Smart Metering Portal · System Administrator Manual v1.0 · July 2026<br>
+    Generated with Devin
+  </div>
+</div>
+</body>
+</html>
