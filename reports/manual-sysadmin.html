@@ -3,417 +3,2044 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HWA Smart Metering — System Administrator Manual</title>
+  <title>HWA Smart Metering Portal — System Administrator Manual v1.0</title>
   <style>
+    /* ══════════════════════════════════════════════════════════
+       ROOT TOKENS
+    ══════════════════════════════════════════════════════════ */
     :root {
-      --primary: #0f4c81;
-      --secondary: #6c757d;
-      --success: #198754;
-      --warning: #e6a817;
-      --danger: #dc3545;
-      --light: #f8f9fa;
-      --border: #dee2e6;
-      --code-bg: #f4f6f9;
-      --dark: #212529;
+      --primary:   #0f4c81;
+      --accent:    #1976d2;
+      --accent2:   #1565c0;
+      --success:   #2e7d32;
+      --warning:   #f57c00;
+      --danger:    #c62828;
+      --info:      #0277bd;
+      --light-bg:  #f5f7fa;
+      --toc-pill:  #1976d2;
+      --border:    #d0d7de;
+      --text:      #1a1a2e;
+      --muted:     #546e7a;
+      --cover-top: #0a2d5a;
+      --cover-bot: #1565c0;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI", Roboto, Arial, sans-serif; color: var(--dark); background: #fff; line-height: 1.7; }
-    .page-wrap { max-width: 980px; margin: 0 auto; padding: 2.5rem 2rem; }
 
-    /* ── Cover ── */
-    .cover { text-align: center; padding: 4rem 2rem 3rem; border-bottom: 4px solid var(--primary); margin-bottom: 3rem; }
-    .cover .logo-band { display: inline-block; background: var(--primary); color: #fff; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; padding: .4rem 1.4rem; border-radius: 2rem; margin-bottom: 1.5rem; }
-    .cover h1 { font-size: 2.4rem; color: var(--primary); line-height: 1.25; }
-    .cover .doc-type { font-size: 1rem; color: var(--secondary); margin: .6rem 0 2rem; }
-    .meta-box { display: inline-grid; grid-template-columns: auto auto; gap: .3rem 1.5rem; text-align: left; background: var(--light); border: 1px solid var(--border); border-radius: .5rem; padding: 1rem 1.5rem; font-size: .92rem; }
-    .meta-box dt { color: var(--secondary); font-weight: 600; }
-    .meta-box dd { color: var(--dark); }
-
-    /* ── Headings ── */
-    h2 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: .4rem; margin: 2.8rem 0 1rem; font-size: 1.45rem; }
-    h3 { color: var(--dark); margin: 2rem 0 .7rem; font-size: 1.1rem; }
-    h4 { color: var(--primary); margin: 1.4rem 0 .5rem; font-size: 1rem; }
-    p  { margin-bottom: .9rem; font-size: .97rem; }
-    li { font-size: .97rem; margin-bottom: .3rem; }
-    ul, ol { padding-left: 1.5rem; margin-bottom: .9rem; }
-
-    /* ── Code / Pre ── */
-    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .87rem; background: var(--code-bg); padding: .15rem .4rem; border-radius: .25rem; }
-    pre  { background: #1e1e2e; color: #cdd6f4; font-family: "SFMono-Regular", Consolas, monospace; font-size: .86rem; padding: 1.1rem 1.3rem; border-radius: .5rem; overflow-x: auto; margin: .8rem 0 1.2rem; line-height: 1.55; }
-    pre .c { color: #6c7086; }   /* comment */
-    pre .k { color: #cba6f7; }   /* keyword */
-    pre .s { color: #a6e3a1; }   /* string */
-    pre .v { color: #89dceb; }   /* variable */
-
-    /* ── Callout boxes ── */
-    .note, .warn, .tip, .danger-box {
-      border-left: 5px solid; padding: .9rem 1.1rem; border-radius: 0 .5rem .5rem 0; margin: 1.1rem 0;
+    /* ══════════════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.75;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
-    .note    { background: #dbeafe; border-color: #3b82f6; color: #1e3a5f; }
-    .warn    { background: #fef9c3; border-color: var(--warning); color: #713f12; }
-    .tip     { background: #dcfce7; border-color: var(--success); color: #14532d; }
-    .danger-box { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
-    .note strong, .warn strong, .tip strong, .danger-box strong { display: block; margin-bottom: .3rem; }
+    a { color: var(--accent); text-decoration: none; }
 
-    /* ── Tables ── */
-    table { width: 100%; border-collapse: collapse; margin: .8rem 0 1.4rem; font-size: .93rem; }
-    th, td { border: 1px solid var(--border); padding: .6rem .85rem; vertical-align: top; }
-    th { background: var(--primary); color: #fff; font-weight: 600; }
-    tr:nth-child(even) { background: var(--light); }
+    /* ══════════════════════════════════════════════════════════
+       LAYOUT WRAPPER
+    ══════════════════════════════════════════════════════════ */
+    .page-wrap {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 0 2.2rem 3rem;
+    }
 
-    /* ── Mock UI screenshots (CSS-drawn) ── */
-    .mock-browser { border: 1px solid var(--border); border-radius: .6rem; overflow: hidden; margin: 1.2rem 0; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
-    .mock-browser .bar { background: #e8e8e8; padding: .45rem .9rem; display: flex; align-items: center; gap: .5rem; }
-    .mock-browser .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .mock-browser .dot.r { background: #ff5f57; }
-    .mock-browser .dot.y { background: #ffbd2e; }
-    .mock-browser .dot.g { background: #28ca42; }
-    .mock-browser .url { background: #fff; border: 1px solid #ccc; border-radius: 3px; padding: .15rem .6rem; font-size: .78rem; color: #555; flex: 1; }
-    .mock-browser .body { background: #fff; padding: 0; }
+    /* ══════════════════════════════════════════════════════════
+       COVER PAGE
+    ══════════════════════════════════════════════════════════ */
+    .cover {
+      position: relative;
+      background: linear-gradient(155deg, var(--cover-top) 0%, var(--cover-bot) 60%, #0d47a1 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0;
+      overflow: hidden;
+      page-break-after: always;
+    }
 
-    .mock-navbar { background: var(--primary); color: #fff; padding: .6rem 1.2rem; font-size: .85rem; display: flex; align-items: center; justify-content: space-between; }
-    .mock-navbar .brand { font-weight: 700; letter-spacing: 1px; }
-    .mock-navbar .nav-items span { margin-left: 1.2rem; opacity: .85; font-size: .82rem; }
+    /* Decorative geometric shapes */
+    .cover-shape1 {
+      position: absolute; top: -80px; right: -80px;
+      width: 340px; height: 340px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    .cover-shape2 {
+      position: absolute; top: 80px; right: 60px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+    }
+    .cover-shape3 {
+      position: absolute; bottom: 120px; left: -60px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .cover-shape4 {
+      position: absolute; bottom: -40px; right: 120px;
+      width: 200px; height: 200px;
+      transform: rotate(45deg);
+      background: rgba(255,255,255,0.04);
+      border-radius: 24px;
+    }
+    .cover-shape5 {
+      position: absolute; top: 40%; left: 55%;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(25,118,210,0.35) 0%, transparent 70%);
+    }
 
-    .mock-card { background: #f9fafb; border: 1px solid var(--border); border-radius: .4rem; padding: 1rem 1.2rem; margin: .8rem 1.2rem; font-size: .86rem; }
-    .mock-card h5 { font-size: .88rem; color: var(--primary); margin-bottom: .5rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
-    .mock-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
-    .mock-table th { background: var(--primary); color: #fff; padding: .3rem .6rem; text-align: left; }
-    .mock-table td { border-bottom: 1px solid #e9ecef; padding: .28rem .6rem; }
-    .mock-table tr:last-child td { border-bottom: none; }
-    .badge { display: inline-block; padding: .15rem .5rem; font-size: .75rem; font-weight: 600; border-radius: .3rem; color: #fff; }
-    .badge-success { background: var(--success); }
-    .badge-warning { background: var(--warning); color: #000; }
-    .badge-danger  { background: var(--danger); }
-    .badge-info    { background: #0891b2; }
-    .btn-mock { display: inline-block; padding: .3rem .9rem; border-radius: .35rem; font-size: .82rem; font-weight: 600; cursor: default; }
-    .btn-primary-mock { background: var(--primary); color: #fff; }
-    .btn-success-mock { background: var(--success); color: #fff; }
-    .btn-danger-mock  { background: var(--danger); color: #fff; border: 1px solid var(--danger); }
-    .form-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; padding: .6rem 1.2rem; }
-    .form-input { border: 1px solid #ccc; border-radius: .3rem; padding: .28rem .7rem; font-size: .82rem; color: #333; background: #fff; }
+    .cover-inner {
+      position: relative;
+      z-index: 2;
+      padding: 4.5rem 5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
 
-    /* ── Architecture diagram ── */
-    .arch { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; margin: 1.5rem 0; }
-    .arch-box { background: var(--light); border: 2px solid var(--primary); border-radius: .5rem; padding: .8rem 1rem; text-align: center; font-size: .82rem; min-width: 110px; }
-    .arch-box.ext { border-color: var(--warning); background: #fffbeb; }
-    .arch-box.db  { border-color: var(--success); background: #f0fdf4; }
-    .arch-box span { display: block; font-size: 1.6rem; }
-    .arch-arrow { font-size: 1.5rem; color: var(--secondary); padding: 0 .3rem; }
+    .cover-logo-band {
+      display: inline-flex;
+      align-items: center;
+      gap: .7rem;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(4px);
+      border-radius: 40px;
+      padding: .5rem 1.5rem;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #e3f2fd;
+      width: fit-content;
+      margin-bottom: 2.8rem;
+    }
+    .cover-logo-icon {
+      width: 22px; height: 22px;
+      background: linear-gradient(135deg, #64b5f6, #1976d2);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+    }
 
-    /* ── Table of contents ── */
-    .toc { background: var(--light); border: 1px solid var(--border); border-radius: .5rem; padding: 1.2rem 1.5rem; margin-bottom: 2rem; }
-    .toc h3 { margin-top: 0; color: var(--primary); font-size: 1rem; margin-bottom: .7rem; }
-    .toc ol { margin: 0; padding-left: 1.3rem; }
-    .toc li { font-size: .93rem; margin-bottom: .2rem; }
-    .toc a { color: var(--primary); text-decoration: none; }
-    .toc a:hover { text-decoration: underline; }
+    .cover-tag {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #90caf9;
+      margin-bottom: .9rem;
+    }
+    .cover-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.18;
+      color: #fff;
+      margin-bottom: 1.1rem;
+      max-width: 700px;
+    }
+    .cover-title span {
+      color: #90caf9;
+    }
+    .cover-subtitle {
+      font-size: 1.1rem;
+      color: #bbdefb;
+      margin-bottom: 3.2rem;
+      letter-spacing: .5px;
+    }
+    .cover-divider {
+      width: 64px; height: 4px;
+      background: linear-gradient(90deg, #64b5f6, #1976d2);
+      border-radius: 2px;
+      margin-bottom: 2.8rem;
+    }
 
-    /* ── Step list ── */
-    .steps { counter-reset: step; list-style: none; padding: 0; }
-    .steps li { counter-increment: step; display: flex; gap: 1rem; margin-bottom: 1rem; }
-    .steps li::before { content: counter(step); background: var(--primary); color: #fff; min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; flex-shrink: 0; margin-top: .1rem; }
+    .cover-meta-table {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      width: fit-content;
+      min-width: 480px;
+      background: rgba(255,255,255,0.06);
+    }
+    .cover-meta-cell {
+      padding: .85rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      border-right: 1px solid rgba(255,255,255,0.12);
+    }
+    .cover-meta-cell:nth-child(even) { border-right: none; }
+    .cover-meta-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .cover-meta-label {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #90caf9;
+      margin-bottom: .2rem;
+    }
+    .cover-meta-value {
+      font-size: .92rem;
+      font-weight: 600;
+      color: #fff;
+    }
 
-    /* ── Footer ── */
-    .footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: .82rem; color: var(--secondary); text-align: center; }
+    /* Bottom wave stripe */
+    .cover-bottom-stripe {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 72px;
+      background: linear-gradient(90deg,
+        #0d47a1 0%, #1565c0 15%, #1976d2 30%,
+        #0d47a1 45%, #1565c0 60%, #1976d2 75%, #0d47a1 100%);
+      opacity: .45;
+      clip-path: polygon(0 60%, 5% 30%, 10% 60%, 15% 20%, 20% 60%, 25% 35%, 30% 60%, 35% 25%, 40% 60%, 45% 30%, 50% 60%, 55% 20%, 60% 60%, 65% 35%, 70% 60%, 75% 25%, 80% 60%, 85% 30%, 90% 60%, 95% 20%, 100% 60%, 100% 100%, 0 100%);
+    }
+    .cover-bottom-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #64b5f6 0%, #1976d2 40%, #0d47a1 70%, #64b5f6 100%);
+    }
 
+    /* ══════════════════════════════════════════════════════════
+       TABLE OF CONTENTS
+    ══════════════════════════════════════════════════════════ */
+    .toc-section {
+      padding: 3.5rem 0 2.5rem;
+      border-bottom: 2px solid #e3e8f0;
+      margin-bottom: 3rem;
+      page-break-after: always;
+    }
+    .toc-header {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .toc-header-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(15,76,129,0.3);
+    }
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .1rem;
+    }
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .6rem .8rem;
+      border-radius: 8px;
+      transition: background .2s;
+    }
+    .toc-item:hover { background: #eef4ff; }
+    .toc-pill {
+      min-width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(25,118,210,0.35);
+    }
+    .toc-label {
+      font-size: .97rem;
+      color: var(--text);
+      font-weight: 500;
+      flex: 1;
+    }
+    .toc-dots {
+      flex: 1;
+      border-bottom: 2px dotted #c0cfe0;
+      margin: 0 .5rem;
+      height: 0;
+      align-self: center;
+    }
+    .toc-page {
+      font-size: .85rem;
+      color: var(--muted);
+      font-weight: 600;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SECTIONS
+    ══════════════════════════════════════════════════════════ */
+    .doc-section {
+      margin-bottom: 4rem;
+      position: relative;
+      page-break-inside: avoid;
+    }
+
+    /* Section heading banner */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: linear-gradient(90deg, #e8f0fe 0%, #f0f6ff 60%, #fff 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+    }
+    .section-num-circle {
+      min-width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 3px 10px rgba(15,76,129,0.35);
+    }
+    .section-heading h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .section-heading .section-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: .15rem;
+      font-weight: 500;
+    }
+
+    /* Sub-headings */
+    .subsection-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 1.8rem 0 .9rem;
+      padding-bottom: .4rem;
+      border-bottom: 2px solid #dce8f9;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .subsection-heading::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 18px;
+      background: linear-gradient(180deg, var(--accent), var(--primary));
+      border-radius: 2px;
+    }
+
+    p { margin-bottom: .85rem; font-size: .97rem; }
+
+    /* ══════════════════════════════════════════════════════════
+       TABLES
+    ══════════════════════════════════════════════════════════ */
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      margin: 1.2rem 0 1.6rem;
+      font-size: .9rem;
+    }
+    .data-table thead tr {
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+    }
+    .data-table thead th {
+      padding: .85rem 1.1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: .8rem;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+    .data-table tbody tr:nth-child(odd)  { background: #fff; }
+    .data-table tbody tr:nth-child(even) { background: #f0f5fc; }
+    .data-table tbody tr:hover           { background: #e3edf8; }
+    .data-table tbody td {
+      padding: .7rem 1.1rem;
+      border-bottom: 1px solid #e0eaf5;
+      vertical-align: top;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+
+    /* Compact table variant */
+    .data-table.compact thead th { padding: .6rem .9rem; }
+    .data-table.compact tbody td { padding: .55rem .9rem; }
+
+    /* ══════════════════════════════════════════════════════════
+       CODE BLOCKS
+    ══════════════════════════════════════════════════════════ */
+    .code-block {
+      background: #1a1a2e;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1.1rem 0 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      font-size: .84rem;
+    }
+    .code-block-header {
+      background: #16213e;
+      padding: .6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      border-bottom: 1px solid #0f3460;
+    }
+    .cb-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .cb-dot.red    { background: #ff5f57; }
+    .cb-dot.yellow { background: #ffbd2e; }
+    .cb-dot.green  { background: #28c840; }
+    .code-block-label {
+      margin-left: .5rem;
+      font-size: .72rem;
+      color: #5c7a9e;
+      font-family: "Courier New", monospace;
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+    .code-block pre {
+      margin: 0;
+      padding: 1.2rem 1.5rem;
+      overflow-x: auto;
+      font-family: "Courier New", Consolas, "Lucida Console", monospace;
+      line-height: 1.7;
+      font-size: .84rem;
+    }
+    .code-block code { display: block; }
+    .c-comment { color: #546e7a; font-style: italic; }
+    .c-key     { color: #80cbc4; font-weight: 600; }
+    .c-val     { color: #f48fb1; }
+    .c-str     { color: #a5d6a7; }
+    .c-num     { color: #ffcc80; }
+    .c-cmd     { color: #80cbc4; font-weight: 600; }
+    .c-arg     { color: #ce93d8; }
+    .c-path    { color: #fff176; }
+    .c-op      { color: #ef9a9a; }
+    .c-url     { color: #90caf9; }
+    .c-white   { color: #eceff1; }
+    .c-muted   { color: #607d8b; }
+    .c-ok      { color: #69f0ae; font-weight: 700; }
+    .c-err     { color: #ff5252; font-weight: 700; }
+    .c-warn    { color: #ffca28; font-weight: 700; }
+
+    /* Terminal block */
+    .terminal-block {
+      background: #0d1117;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1.1rem 0 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      font-size: .84rem;
+    }
+    .terminal-header {
+      background: #161b22;
+      padding: .55rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      border-bottom: 1px solid #21262d;
+    }
+    .terminal-block pre {
+      margin: 0;
+      padding: 1.2rem 1.5rem;
+      font-family: "Courier New", Consolas, monospace;
+      line-height: 1.65;
+      color: #3fb950;
+      overflow-x: auto;
+    }
+    .t-prompt { color: #58a6ff; font-weight: 700; }
+    .t-cmd    { color: #e6edf3; }
+    .t-out    { color: #3fb950; }
+    .t-err    { color: #f85149; }
+    .t-info   { color: #79c0ff; }
+    .t-dim    { color: #484f58; }
+
+    /* ══════════════════════════════════════════════════════════
+       CALLOUT BOXES
+    ══════════════════════════════════════════════════════════ */
+    .callout {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      margin: 1.2rem 0 1.5rem;
+      border-left: 5px solid;
+      font-size: .93rem;
+    }
+    .callout-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+    .callout-body strong { display: block; font-size: .88rem; font-weight: 700; margin-bottom: .2rem; text-transform: uppercase; letter-spacing: .5px; }
+    .callout.note    { background: #e3f2fd; border-color: #1976d2; color: #0d47a1; }
+    .callout.tip     { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; }
+    .callout.warning { background: #fff8e1; border-color: #f57c00; color: #e65100; }
+    .callout.danger  { background: #ffebee; border-color: #c62828; color: #b71c1c; }
+    .callout.info    { background: #e0f7fa; border-color: #0097a7; color: #006064; }
+
+    /* ══════════════════════════════════════════════════════════
+       NUMBERED STEP LISTS
+    ══════════════════════════════════════════════════════════ */
+    .steps { list-style: none; display: flex; flex-direction: column; gap: .6rem; margin: 1rem 0 1.5rem; }
+    .step-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: .7rem 1rem .7rem 0;
+    }
+    .step-num {
+      min-width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(25,118,210,0.3);
+      margin-top: .15rem;
+    }
+    .step-body { font-size: .95rem; line-height: 1.65; }
+    .step-body strong { color: var(--primary); }
+
+    /* ══════════════════════════════════════════════════════════
+       ARCHITECTURE DIAGRAM
+    ══════════════════════════════════════════════════════════ */
+    .arch-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, #f0f6ff 0%, #e8f0fe 100%);
+      border-radius: 14px;
+      border: 1.5px solid #c5d8f5;
+      margin: 1.2rem 0 1.5rem;
+    }
+    .arch-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+    }
+    .arch-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1rem 1.3rem;
+      border-radius: 12px;
+      min-width: 145px;
+      max-width: 165px;
+      border: 2px solid;
+      position: relative;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.12);
+    }
+    .arch-node.iot      { background: #e8f5e9; border-color: #2e7d32; }
+    .arch-node.portal   { background: #e3f2fd; border-color: #1976d2; }
+    .arch-node.api      { background: #fff3e0; border-color: #f57c00; }
+    .arch-node.db       { background: #fce4ec; border-color: #c62828; }
+    .arch-node.fw       { background: #ede7f6; border-color: #6a1b9a; }
+    .arch-node-icon { font-size: 1.8rem; margin-bottom: .3rem; }
+    .arch-node-title { font-size: .8rem; font-weight: 800; color: var(--text); letter-spacing: .3px; line-height: 1.3; }
+    .arch-node-sub   { font-size: .68rem; color: var(--muted); margin-top: .2rem; line-height: 1.4; }
+    .arch-node-badge {
+      font-size: .6rem;
+      font-weight: 700;
+      padding: .1rem .45rem;
+      border-radius: 20px;
+      margin-top: .4rem;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+    .badge-green  { background: #2e7d32; color: #fff; }
+    .badge-blue   { background: #1976d2; color: #fff; }
+    .badge-orange { background: #f57c00; color: #fff; }
+    .badge-red    { background: #c62828; color: #fff; }
+    .badge-purple { background: #6a1b9a; color: #fff; }
+
+    .arch-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+      font-size: .62rem;
+      color: var(--muted);
+      font-weight: 700;
+      gap: .2rem;
+      padding: 0 .2rem;
+    }
+    .arch-arrow-line {
+      width: 50px; height: 2px;
+      background: linear-gradient(90deg, #90caf9, #1976d2);
+      position: relative;
+    }
+    .arch-arrow-line::after {
+      content: '';
+      position: absolute;
+      right: -1px; top: -4px;
+      width: 0; height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 9px solid #1976d2;
+    }
+    .arch-arrow-down {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      padding: .3rem 0;
+    }
+    .arch-arrow-vert {
+      width: 2px; height: 32px;
+      background: linear-gradient(180deg, #90caf9, #1976d2);
+      position: relative;
+    }
+    .arch-arrow-vert::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: -4px;
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 9px solid #1976d2;
+    }
+    .arch-arrow-label {
+      font-size: .6rem;
+      color: #546e7a;
+      font-weight: 700;
+      letter-spacing: .3px;
+      background: #fff;
+      border: 1px solid #c5d8f5;
+      border-radius: 4px;
+      padding: .1rem .4rem;
+      margin-top: .2rem;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       CHECKLIST
+    ══════════════════════════════════════════════════════════ */
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: .45rem; margin: 1rem 0; }
+    .checklist li {
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      padding: .55rem .8rem;
+      background: #f5f7fa;
+      border-radius: 7px;
+      font-size: .93rem;
+      border-left: 3px solid #c5d8f5;
+    }
+    .check-icon { font-size: 1rem; flex-shrink: 0; margin-top: .05rem; }
+
+    /* ══════════════════════════════════════════════════════════
+       INLINE CODE / BADGE
+    ══════════════════════════════════════════════════════════ */
+    code {
+      font-family: "Courier New", Consolas, monospace;
+      font-size: .83em;
+      background: #eef2f8;
+      color: var(--primary);
+      padding: .1em .38em;
+      border-radius: 4px;
+      border: 1px solid #d0d9ea;
+    }
+    .badge {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+    .badge-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .badge-warn    { background: #fff3e0; color: #f57c00; border: 1px solid #ffcc80; }
+    .badge-danger  { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .badge-info    { background: #e3f2fd; color: #1976d2; border: 1px solid #90caf9; }
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION FOOTER
+    ══════════════════════════════════════════════════════════ */
+    .section-footer {
+      margin-top: 1.2rem;
+      padding-top: .8rem;
+      border-top: 1px solid #e0eaf5;
+      font-size: .72rem;
+      color: #9ab0c8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sf-logo { font-weight: 800; color: #7a9cbf; letter-spacing: .5px; }
+
+    /* ══════════════════════════════════════════════════════════
+       GLOBAL FOOTER
+    ══════════════════════════════════════════════════════════ */
+    .global-footer {
+      margin-top: 4rem;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .82rem;
+      box-shadow: 0 4px 20px rgba(15,76,129,0.25);
+    }
+    .global-footer strong { font-weight: 800; font-size: .92rem; }
+
+    /* ══════════════════════════════════════════════════════════
+       PRINT STYLES
+    ══════════════════════════════════════════════════════════ */
     @media print {
-      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .page-wrap { padding: 0; max-width: 100%; }
-      .cover { page-break-after: always; }
-      h2 { page-break-after: avoid; }
-      pre, table, .mock-browser { page-break-inside: avoid; }
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      body { font-size: 12px; }
+      .cover { page-break-after: always; min-height: 100vh; }
+      .toc-section { page-break-after: always; }
+      .doc-section { page-break-inside: avoid; }
+      .page-wrap { padding: 0 1.2rem; }
+      .arch-diagram { break-inside: avoid; }
+      .code-block { break-inside: avoid; }
+      .terminal-block { break-inside: avoid; }
+      .callout { break-inside: avoid; }
     }
   </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-shape1"></div>
+  <div class="cover-shape2"></div>
+  <div class="cover-shape3"></div>
+  <div class="cover-shape4"></div>
+  <div class="cover-shape5"></div>
+
+  <div class="cover-inner">
+    <div class="cover-logo-band">
+      <span class="cover-logo-icon">💧</span>
+      Hargeisa Water Agency
+    </div>
+
+    <div class="cover-tag">Technical Reference Document</div>
+    <div class="cover-title">Smart Metering Portal —<br /><span>System Administrator</span> Manual</div>
+    <div class="cover-subtitle">Infrastructure &nbsp;·&nbsp; Deployment &nbsp;·&nbsp; Maintenance &nbsp;·&nbsp; Troubleshooting</div>
+    <div class="cover-divider"></div>
+
+    <div class="cover-meta-table">
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">Document Version</div>
+        <div class="cover-meta-value">Version 1.0</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">Issue Date</div>
+        <div class="cover-meta-value">8 July 2026</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">Target Audience</div>
+        <div class="cover-meta-value">System Administrators / DevOps</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">Classification</div>
+        <div class="cover-meta-value">🔒 Internal Use Only</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">System</div>
+        <div class="cover-meta-value">Nobleus Smart Metering Portal</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">Platform</div>
+        <div class="cover-meta-value">AWS EC2 · Ubuntu 22.04 LTS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-bottom-stripe"></div>
+  <div class="cover-bottom-bar"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════════════════════════ -->
 <div class="page-wrap">
+<div class="toc-section">
+  <div class="toc-header">
+    <div class="toc-header-icon">📋</div>
+    Table of Contents
+  </div>
+  <ul class="toc-list">
+    <li class="toc-item"><span class="toc-pill">1</span><span class="toc-label">System Overview</span><span class="toc-dots"></span><span class="toc-page">§1</span></li>
+    <li class="toc-item"><span class="toc-pill">2</span><span class="toc-label">Architecture Diagram</span><span class="toc-dots"></span><span class="toc-page">§2</span></li>
+    <li class="toc-item"><span class="toc-pill">3</span><span class="toc-label">Server Requirements</span><span class="toc-dots"></span><span class="toc-page">§3</span></li>
+    <li class="toc-item"><span class="toc-pill">4</span><span class="toc-label">Environment Variables (.env)</span><span class="toc-dots"></span><span class="toc-page">§4</span></li>
+    <li class="toc-item"><span class="toc-pill">5</span><span class="toc-label">Apache Virtual Hosts</span><span class="toc-dots"></span><span class="toc-page">§5</span></li>
+    <li class="toc-item"><span class="toc-pill">6</span><span class="toc-label">Database — Local MySQL &amp; Remote PostgreSQL</span><span class="toc-dots"></span><span class="toc-page">§6</span></li>
+    <li class="toc-item"><span class="toc-pill">7</span><span class="toc-label">Billing Date Policy — The 28th Rule</span><span class="toc-dots"></span><span class="toc-page">§7</span></li>
+    <li class="toc-item"><span class="toc-pill">8</span><span class="toc-label">Deployment &amp; Upgrade Procedures</span><span class="toc-dots"></span><span class="toc-page">§8</span></li>
+    <li class="toc-item"><span class="toc-pill">9</span><span class="toc-label">Logs &amp; Monitoring</span><span class="toc-dots"></span><span class="toc-page">§9</span></li>
+    <li class="toc-item"><span class="toc-pill">10</span><span class="toc-label">Troubleshooting Reference</span><span class="toc-dots"></span><span class="toc-page">§10</span></li>
+    <li class="toc-item"><span class="toc-pill">11</span><span class="toc-label">Security Checklist</span><span class="toc-dots"></span><span class="toc-page">§11</span></li>
+  </ul>
+</div>
 
-  <!-- COVER -->
-  <div class="cover">
-    <div class="logo-band">HARGEISA WATER AGENCY</div>
-    <h1>Smart Metering Portal<br>System Administrator Manual</h1>
-    <div class="doc-type">Infrastructure · Deployment · Maintenance</div>
-    <dl class="meta-box">
-      <dt>Version</dt>       <dd>1.0</dd>
-      <dt>Date</dt>          <dd>8 July 2026</dd>
-      <dt>Audience</dt>      <dd>System Administrators / DevOps</dd>
-      <dt>Confidentiality</dt><dd>Internal Use Only</dd>
-    </dl>
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1 — SYSTEM OVERVIEW
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s1">
+  <div class="section-heading">
+    <div class="section-num-circle">1</div>
+    <div>
+      <h2>System Overview</h2>
+      <div class="section-desc">What the Smart Metering Portal does and how it fits in the HWA ecosystem</div>
+    </div>
   </div>
 
-  <!-- TOC -->
-  <div class="toc">
-    <h3>Table of Contents</h3>
-    <ol>
-      <li><a href="#s1">System Overview</a></li>
-      <li><a href="#s2">Architecture</a></li>
-      <li><a href="#s3">Server Requirements</a></li>
-      <li><a href="#s4">Environment Variables (.env)</a></li>
-      <li><a href="#s5">Apache Virtual Hosts</a></li>
-      <li><a href="#s6">Database</a></li>
-      <li><a href="#s7">Billing Date Policy (28th Rule)</a></li>
-      <li><a href="#s8">Deployment &amp; Upgrade</a></li>
-      <li><a href="#s9">Logs &amp; Monitoring</a></li>
-      <li><a href="#s10">Troubleshooting Reference</a></li>
-      <li><a href="#s11">Security Checklist</a></li>
-    </ol>
-  </div>
+  <p>The <strong>Hargeisa Water Agency Smart Metering Portal</strong> (internally referred to as the <em>Nobleus Portal</em>) is the central digital operations platform for managing IoT-based smart water meters deployed across Hargeisa. It ingests live telemetry from the ThingsBoard IoT platform, stores readings locally in a MySQL database hosted on AWS EC2, and synchronises billing data to the HWA Core Billing system running on-premise via a secured REST API.</p>
 
-  <!-- SECTION 1 -->
-  <h2 id="s1">1. System Overview</h2>
-  <p>
-    The HWA Smart Metering Portal is a Yii 2 PHP web application hosted on AWS. It receives IoT water-meter readings via a ThingsBoard webhook, allows billing clerks to review and approve readings, and pushes approved readings to the core billing server (<strong>reading.hargeisawatertech.com</strong>) for invoice generation.
-  </p>
-  <table>
-    <thead><tr><th>Domain</th><th>Purpose</th></tr></thead>
-    <tbody>
-      <tr><td><code>portal.hargeisawatertech.com</code></td><td>Full admin/clerk portal (all modules)</td></tr>
-      <tr><td><code>billing.hargeisawatertech.com</code></td><td>Billing module only (restricted access)</td></tr>
-      <tr><td><code>api.hargeisawatertech.com</code></td><td>REST API for ThingsBoard &amp; mobile apps</td></tr>
-      <tr><td><code>reading.hargeisawatertech.com</code></td><td>External HWA Core Billing API (remote)</td></tr>
-    </tbody>
-  </table>
+  <p>The system follows a hub-and-spoke integration model: all field devices report to ThingsBoard, which pushes webhook payloads to the portal. The portal normalises, validates, and enriches the data before forwarding relevant billing entries to the Core Billing API at <code>reading.hargeisawatertech.com</code>. A FortiGate firewall VIP at <strong>102.218.58.66</strong> provides network-level separation between the AWS environment and the on-premise HWA LAN.</p>
 
-  <!-- SECTION 2 -->
-  <h2 id="s2">2. Architecture</h2>
-
-  <div class="arch">
-    <div class="arch-box"><span>📡</span>ThingsBoard<br>(IoT meters)</div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-box"><span>🌐</span>Nobleus Portal<br>(AWS EC2)</div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-box ext"><span>💳</span>Core Billing API<br>(reading.hargeisawatertech.com)</div>
-    <div class="arch-arrow">→</div>
-    <div class="arch-box db"><span>🗄️</span>HWA PostgreSQL<br>(on-premise)</div>
-  </div>
-
-  <ul>
-    <li>ThingsBoard pushes telemetry via REST webhook to <code>api.hargeisawatertech.com</code>.</li>
-    <li>The portal stores raw readings in its local MySQL database (<code>nobleus</code>).</li>
-    <li>Billing clerks review and approve readings on the portal.</li>
-    <li>Approved readings are pushed to <code>reading.hargeisawatertech.com/bill/api/meter-reading</code>.</li>
-    <li>The core billing server writes invoices to the on-premise PostgreSQL database.</li>
-  </ul>
-
-  <!-- SECTION 3 -->
-  <h2 id="s3">3. Server Requirements</h2>
-  <table>
-    <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
-    <tbody>
-      <tr><td>OS</td><td>Ubuntu 22.04 LTS (Jammy) or later</td></tr>
-      <tr><td>Web Server</td><td>Apache 2.4 with <code>mod_rewrite</code>, <code>mod_ssl</code></td></tr>
-      <tr><td>PHP</td><td>8.1 or 8.3 with extensions: <code>pdo_mysql</code>, <code>curl</code>, <code>mbstring</code>, <code>intl</code>, <code>gd</code>, <code>zip</code></td></tr>
-      <tr><td>Database</td><td>MySQL 8.0 (local), PostgreSQL 10+ (remote — core billing)</td></tr>
-      <tr><td>Composer</td><td>2.x</td></tr>
-      <tr><td>Git</td><td>2.x</td></tr>
-      <tr><td>SSL</td><td>Let's Encrypt via Certbot</td></tr>
-    </tbody>
-  </table>
-
-  <!-- SECTION 4 -->
-  <h2 id="s4">4. Environment Variables (.env)</h2>
-  <p>All secrets and environment-specific values live in <code>/home/admin/nobleus-admin/.env</code>. This file is excluded from Git.</p>
-
-  <pre><code><span class="c"># ── Database (local MySQL) ──────────────────────────</span>
-<span class="v">DB_HOST</span>=localhost
-<span class="v">DB_PORT</span>=3306
-<span class="v">DB_NAME</span>=nobleus
-<span class="v">DB_USER</span>=nobleus
-<span class="v">DB_PASSWORD</span>=your_secure_password
-
-<span class="c"># ── ThingsBoard ──────────────────────────────────────</span>
-<span class="v">TB_WEBHOOK_TOKEN</span>=865e23dd298796...    <span class="c"># webhook shared secret</span>
-<span class="v">TB_URL</span>=https://hwa-smartmetering-app.com
-<span class="v">TB_USERNAME</span>=tenant@hargeisawateragency.com
-<span class="v">TB_PASSWORD</span>=tenant
-<span class="v">TB_TELEMETRY_KEY</span>=absoluteMeterReading_liters
-
-<span class="c"># ── Canonical Domains ────────────────────────────────</span>
-<span class="v">BILLING_PORTAL_URL</span>=https://billing.hargeisawatertech.com
-<span class="v">PORTAL_URL</span>=https://portal.hargeisawatertech.com
-<span class="v">API_BASE_URL</span>=https://api.hargeisawatertech.com
-
-<span class="c"># ── Core Billing API (remote) ────────────────────────</span>
-<span class="v">CORE_READING_API_URL</span>=https://reading.hargeisawatertech.com
-<span class="v">CORE_METERS_API_URL</span>=https://meters.hargeisawatertech.com
-<span class="v">CORE_API_TOKEN</span>=eyJ0eXAiOiJKV1Q...   <span class="c"># JWT service token</span>
-
-<span class="c"># ── Optional: disable SSL verify during cert issues ──</span>
-<span class="c"># CORE_API_INSECURE_SSL=1</span></code></pre>
-
-  <div class="warn"><strong>Warning</strong> Never commit <code>.env</code> to Git. Rotate <code>CORE_API_TOKEN</code> and <code>TB_WEBHOOK_TOKEN</code> immediately if exposed.</div>
-
-  <!-- SECTION 5 -->
-  <h2 id="s5">5. Apache Virtual Hosts</h2>
-  <p>Config files live in <code>/etc/apache2/sites-available/</code>. Enable with <code>a2ensite</code>.</p>
-  <table>
-    <thead><tr><th>File</th><th>Domain</th><th>Document Root</th></tr></thead>
-    <tbody>
-      <tr><td><code>portal.hargeisawatertech.com-le-ssl.conf</code></td><td>portal domain</td><td><code>backend/web</code></td></tr>
-      <tr><td><code>nobleus-ssl.conf</code></td><td>billing domain</td><td><code>backend/web</code></td></tr>
-      <tr><td><code>api.hargeisawatertech.com.conf</code></td><td>API domain</td><td><code>api/web</code></td></tr>
-      <tr><td><code>000-catch-all.conf</code></td><td>bare IP / unknown host</td><td>returns 403</td></tr>
-    </tbody>
-  </table>
-
-  <h4>Reload Apache after config changes</h4>
-  <pre><code>sudo systemctl reload apache2</code></pre>
-
-  <h4>Renew SSL certificates</h4>
-  <pre><code>sudo certbot renew --dry-run      <span class="c"># test first</span>
-sudo certbot renew                <span class="c"># apply</span>
-sudo systemctl reload apache2</code></pre>
-
-  <!-- SECTION 6 -->
-  <h2 id="s6">6. Database</h2>
-  <h3>6.1 Local MySQL (nobleus)</h3>
-  <table>
-    <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
-    <tbody>
-      <tr><td><code>meter_reading_raw</code></td><td>Raw IoT readings (liters) from ThingsBoard</td></tr>
-      <tr><td><code>billing_ledger</code></td><td>Clerk-approved readings with push status</td></tr>
-      <tr><td><code>billing_audit_logs</code></td><td>Audit trail for all import/push actions</td></tr>
-      <tr><td><code>meters</code></td><td>Physical meter registry</td></tr>
-      <tr><td><code>meter_assignments</code></td><td>Links meters to supply numbers</td></tr>
-    </tbody>
-  </table>
-
-  <h4>Run migrations</h4>
-  <pre><code>cd /home/admin/nobleus-admin
-php yii migrate</code></pre>
-
-  <h4>Check push queue</h4>
-  <pre><code>mysql -u nobleus -p -D nobleus -e \
-  "SELECT id, supply_no, push_status, pushed_at
-   FROM billing_ledger
-   WHERE push_status = 'failed'
-   ORDER BY id DESC LIMIT 20;"</code></pre>
-
-  <h3>6.2 Remote PostgreSQL (HWA Core Billing)</h3>
-  <ul>
-    <li>Host: <code>102.218.58.66</code> port <code>5432</code> (FortiGate VIP → <code>10.10.50.120</code>)</li>
-    <li>Database: <code>HWA_DATA</code> &nbsp;|&nbsp; User: <code>openpg</code></li>
-    <li>If the connection fails, readings queue locally and retry when the remote DB is restored.</li>
-  </ul>
-
-  <h4>Verify remote DB reachability</h4>
-  <pre><code>nc -vz 102.218.58.66 5432           <span class="c"># TCP test</span>
-psql -h 102.218.58.66 -U openpg -d HWA_DATA -c "SELECT version();"</code></pre>
-
-  <!-- SECTION 7 -->
-  <h2 id="s7">7. Billing Date Policy (28th Rule)</h2>
-  <div class="tip">
-    <strong>Company Policy</strong>
-    All meter readings posted to the core billing server use <strong>the 28th of the reading's month</strong> as the official billing date, regardless of when the reading was physically taken.
-  </div>
-  <p>This policy is enforced in code in two places:</p>
-  <ul>
-    <li><strong>Bulk post</strong> (<code>actionPostToBilling</code>) — uses <code>$month . '-28'</code> as the target date.</li>
-    <li><strong>Single post</strong> (<code>actionImport</code>) — derives <code>date('Y-m', ...) . '-28'</code> from the reading's timestamp.</li>
-  </ul>
-  <p>
-    If the reading was taken on a different day (e.g., the 7th), a <code>description</code> field is automatically appended to the API payload noting the actual reading date. This note appears in the core billing system for auditors.
-  </p>
-
-  <!-- SECTION 8 -->
-  <h2 id="s8">8. Deployment &amp; Upgrade</h2>
-  <h3>8.1 First-time setup</h3>
-  <ol class="steps">
-    <li>Clone the repository: <code>git clone git@github.com:apitab/nobleus-admin.git /home/admin/nobleus-admin</code></li>
-    <li>Copy and edit the environment file: <code>cp .env.example .env && nano .env</code></li>
-    <li>Install PHP dependencies: <code>composer install --no-dev --optimize-autoloader</code></li>
-    <li>Run database migrations: <code>php yii migrate</code></li>
-    <li>Set web directory permissions: <code>chmod -R 775 backend/web/assets backend/runtime common/runtime</code></li>
-    <li>Enable Apache vhosts and reload: <code>a2ensite portal.hargeisawatertech.com-le-ssl.conf nobleus-ssl.conf api.hargeisawatertech.com.conf && sudo systemctl reload apache2</code></li>
-  </ol>
-
-  <h3>8.2 Code upgrade</h3>
-  <pre><code>cd /home/admin/nobleus-admin
-git pull origin main
-composer install --no-dev --optimize-autoloader
-php yii migrate                <span class="c"># apply any new migrations</span>
-sudo systemctl reload apache2  <span class="c"># reload Apache (view changes take effect immediately)</span></code></pre>
-
-  <div class="note"><strong>Note</strong> PHP view files take effect on the next page load without a restart. Only Apache config changes require <code>reload</code>.</div>
-
-  <!-- SECTION 9 -->
-  <h2 id="s9">9. Logs &amp; Monitoring</h2>
-  <table>
-    <thead><tr><th>Log</th><th>Location</th></tr></thead>
-    <tbody>
-      <tr><td>Apache access</td><td><code>/var/log/apache2/portal-access.log</code></td></tr>
-      <tr><td>Apache error</td><td><code>/var/log/apache2/portal-error.log</code></td></tr>
-      <tr><td>Application (Yii)</td><td><code>/home/admin/nobleus-admin/backend/runtime/logs/app.log</code></td></tr>
-      <tr><td>Catch-all requests</td><td><code>/var/log/apache2/catchall-error.log</code></td></tr>
-    </tbody>
-  </table>
-
-  <h4>Tail application errors in real time</h4>
-  <pre><code>tail -f /home/admin/nobleus-admin/backend/runtime/logs/app.log</code></pre>
-
-  <h4>Check failed billing pushes in audit log</h4>
-  <pre><code>mysql -u nobleus -p -D nobleus -e \
-  "SELECT id, action, supply_no, details, created_at
-   FROM billing_audit_logs
-   WHERE action LIKE '%failed%'
-   ORDER BY id DESC LIMIT 20;"</code></pre>
-
-  <!-- SECTION 10 -->
-  <h2 id="s10">10. Troubleshooting Reference</h2>
-  <table>
-    <thead><tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr></thead>
+  <div class="subsection-heading">Public-Facing Domains</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Domain</th>
+        <th>Purpose</th>
+        <th>Document Root</th>
+        <th>SSL</th>
+      </tr>
+    </thead>
     <tbody>
       <tr>
-        <td>Push status stays <code>failed</code></td>
-        <td>Remote billing DB unreachable</td>
-        <td>Check <code>nc -vz 102.218.58.66 5432</code>; contact remote DB admin; run retry command once restored</td>
+        <td><code>portal.hargeisawatertech.com</code></td>
+        <td>Full portal — meter management, billing, reports, user admin</td>
+        <td><code>/var/www/nobleus-portal/web</code></td>
+        <td><span class="badge badge-success">Let's Encrypt</span></td>
       </tr>
       <tr>
-        <td>Apache shows SSL cert error on reload</td>
-        <td>Let's Encrypt cert missing or expired</td>
-        <td><code>sudo certbot renew && sudo systemctl reload apache2</code></td>
+        <td><code>billing.hargeisawatertech.com</code></td>
+        <td>Billing-only view for finance department staff</td>
+        <td><code>/var/www/nobleus-portal/web</code></td>
+        <td><span class="badge badge-success">Let's Encrypt</span></td>
       </tr>
       <tr>
-        <td>504 Gateway Timeout on bulk post</td>
-        <td>Remote API too slow / many meters</td>
-        <td>Increase <code>CURLOPT_TIMEOUT</code> in <code>CoreBillingClient.php</code>; run in smaller month batches</td>
+        <td><code>api.hargeisawatertech.com</code></td>
+        <td>REST API endpoint for external consumers (mobile app, integrations)</td>
+        <td><code>/var/www/nobleus-portal/web</code></td>
+        <td><span class="badge badge-success">Let's Encrypt</span></td>
       </tr>
       <tr>
-        <td>Readings not appearing in portal</td>
-        <td>ThingsBoard webhook failing</td>
-        <td>Check <code>TB_WEBHOOK_TOKEN</code> in <code>.env</code>; verify ThingsBoard rule-chain target URL</td>
-      </tr>
-      <tr>
-        <td>Zero readings in ledger</td>
-        <td>Meter transmitting 0 liters</td>
-        <td>Check meter on-site; zero readings are intentionally skipped and never posted to billing</td>
-      </tr>
-      <tr>
-        <td><code>billing_audit_logs</code> empty</td>
-        <td>Table missing (old install)</td>
-        <td>Run <code>php yii migrate</code> to create the table</td>
+        <td><code>reading.hargeisawatertech.com</code></td>
+        <td>HWA Core Billing API — external service, not served by this server</td>
+        <td><em>On-premise HWA server</em></td>
+        <td><span class="badge badge-warn">HWA-managed</span></td>
       </tr>
     </tbody>
   </table>
 
-  <!-- SECTION 11 -->
-  <h2 id="s11">11. Security Checklist</h2>
-  <ul>
-    <li>Rotate <code>CORE_API_TOKEN</code> every 6 months or after any staff departure.</li>
-    <li>Rotate <code>TB_WEBHOOK_TOKEN</code> every 6 months.</li>
-    <li>Keep <code>.env</code> permissions to <code>640</code> (owner read/write, group read only).</li>
-    <li>Ensure <code>YII_DEBUG=false</code> and <code>YII_ENV=prod</code> in production <code>index.php</code>.</li>
-    <li>SSL certificates must not expire — set up auto-renewal cron: <code>0 3 * * * certbot renew --quiet</code>.</li>
-    <li>Restrict MySQL user <code>nobleus</code> to <code>localhost</code> only.</li>
-    <li>The catch-all Apache vhost blocks all bare-IP access — do not disable it.</li>
-    <li>Enable AWS Security Group rules: allow 80, 443 inbound; restrict 22 (SSH) to trusted IPs.</li>
-  </ul>
+  <div class="subsection-heading">Technology Stack</div>
+  <table class="data-table compact">
+    <thead>
+      <tr><th>Component</th><th>Technology</th><th>Version / Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Application Framework</td><td>Yii 2 (PHP)</td><td>PHP 8.3, Yii 2.0.x</td></tr>
+      <tr><td>Web Server</td><td>Apache HTTP Server</td><td>2.4 — mod_rewrite, mod_ssl, mod_headers</td></tr>
+      <tr><td>Local Database</td><td>MySQL</td><td>8.0 — InnoDB engine, UTF8MB4</td></tr>
+      <tr><td>Remote Database</td><td>PostgreSQL</td><td>10+ (on-premise HWA server)</td></tr>
+      <tr><td>Cloud Host</td><td>AWS EC2</td><td>Ubuntu 22.04 LTS, t3.medium+</td></tr>
+      <tr><td>IoT Platform</td><td>ThingsBoard</td><td>REST webhook integration</td></tr>
+      <tr><td>SSL Certificates</td><td>Let's Encrypt / Certbot</td><td>Auto-renewal via cron</td></tr>
+      <tr><td>Dependency Manager</td><td>Composer</td><td>2.x</td></tr>
+      <tr><td>Source Control</td><td>Git</td><td>2.x — deployment via git pull</td></tr>
+    </tbody>
+  </table>
 
-  <div class="footer">
-    Hargeisa Water Agency · Smart Metering Portal · System Administrator Manual v1.0 · July 2026<br>
-    Generated with Devin
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 1 — System Overview</span>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2 — ARCHITECTURE DIAGRAM
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s2">
+  <div class="section-heading">
+    <div class="section-num-circle">2</div>
+    <div>
+      <h2>Architecture Diagram</h2>
+      <div class="section-desc">End-to-end data flow from IoT field devices to HWA on-premise billing database</div>
+    </div>
+  </div>
+
+  <p>The diagram below illustrates the complete data path from smart meters in the field through to the HWA PostgreSQL billing database. All inter-service communication is encrypted. The only inbound path into the AWS EC2 instance is HTTPS (443); outbound calls to the Core Billing API cross the internet to the FortiGate VIP which proxies traffic to the internal application server.</p>
+
+  <div class="arch-diagram">
+    <!-- Row 1: IoT Meters -->
+    <div class="arch-row">
+      <div class="arch-node iot">
+        <div class="arch-node-icon">📡</div>
+        <div class="arch-node-title">IoT Smart Meters</div>
+        <div class="arch-node-sub">Pulse / AMR / LoRa<br />Field devices citywide</div>
+        <span class="arch-node-badge badge-green">Field</span>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div class="arch-arrow-down">
+      <div class="arch-arrow-vert"></div>
+      <span class="arch-arrow-label">MQTT / LoRa</span>
+    </div>
+
+    <!-- Row 2: ThingsBoard -->
+    <div class="arch-row">
+      <div class="arch-node iot" style="min-width:180px;max-width:200px;">
+        <div class="arch-node-icon">🔗</div>
+        <div class="arch-node-title">ThingsBoard IoT Platform</div>
+        <div class="arch-node-sub">Device registry<br />Telemetry aggregation<br />Rule engine</div>
+        <span class="arch-node-badge badge-green">IoT Core</span>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div class="arch-arrow-down">
+      <div class="arch-arrow-vert"></div>
+      <span class="arch-arrow-label">HTTPS REST Webhook<br/>TB_WEBHOOK_TOKEN</span>
+    </div>
+
+    <!-- Row 3: AWS EC2 Portal + MySQL -->
+    <div class="arch-row" style="gap:1.2rem;">
+      <div class="arch-node portal" style="min-width:180px;max-width:200px;">
+        <div class="arch-node-icon">🖥️</div>
+        <div class="arch-node-title">Nobleus Portal</div>
+        <div class="arch-node-sub">AWS EC2 · Ubuntu 22.04<br />PHP 8.3 / Yii 2<br />Apache 2.4</div>
+        <span class="arch-node-badge badge-blue">AWS EC2</span>
+      </div>
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <span style="font-size:.62rem;color:#546e7a;">TCP 3306<br/>localhost</span>
+      </div>
+      <div class="arch-node portal">
+        <div class="arch-node-icon">🗄️</div>
+        <div class="arch-node-title">MySQL 8.0</div>
+        <div class="arch-node-sub">Local database<br />nobleus_db<br />meter_reading_raw …</div>
+        <span class="arch-node-badge badge-blue">Local DB</span>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div class="arch-arrow-down">
+      <div class="arch-arrow-vert"></div>
+      <span class="arch-arrow-label">HTTPS · JWT (CORE_API_TOKEN)<br/>CoreBillingClient</span>
+    </div>
+
+    <!-- Row 4: Core Billing API -->
+    <div class="arch-row">
+      <div class="arch-node api" style="min-width:220px;max-width:240px;">
+        <div class="arch-node-icon">🔌</div>
+        <div class="arch-node-title">Core Billing API</div>
+        <div class="arch-node-sub">reading.hargeisawatertech.com<br />HWA-managed REST service<br />JWT-authenticated</div>
+        <span class="arch-node-badge badge-orange">Ext. API</span>
+      </div>
+    </div>
+
+    <!-- Arrow down -->
+    <div class="arch-arrow-down">
+      <div class="arch-arrow-vert"></div>
+      <span class="arch-arrow-label">FortiGate VIP · 102.218.58.66<br/>NAT → 10.10.50.120</span>
+    </div>
+
+    <!-- Row 5: FortiGate + HWA DB -->
+    <div class="arch-row" style="gap:1.2rem;">
+      <div class="arch-node fw">
+        <div class="arch-node-icon">🛡️</div>
+        <div class="arch-node-title">FortiGate Firewall</div>
+        <div class="arch-node-sub">VIP 102.218.58.66<br />Policy-based routing<br />SSL inspection</div>
+        <span class="arch-node-badge badge-purple">Perimeter</span>
+      </div>
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <span style="font-size:.62rem;color:#546e7a;">TCP 5432<br/>10.10.50.120</span>
+      </div>
+      <div class="arch-node db">
+        <div class="arch-node-icon">🏢</div>
+        <div class="arch-node-title">HWA PostgreSQL DB</div>
+        <div class="arch-node-sub">On-premise server<br />HWA_DATA database<br />user: openpg</div>
+        <span class="arch-node-badge badge-red">On-Prem</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout note">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <strong>Network Boundary</strong>
+      The FortiGate VIP at <code>102.218.58.66</code> is the only internet-facing ingress point for the HWA on-premise network. The Core Billing API application at <code>10.10.50.120</code> is never directly reachable from the internet — all traffic passes through FortiGate policy inspection first.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 2 — Architecture</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3 — SERVER REQUIREMENTS
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s3">
+  <div class="section-heading">
+    <div class="section-num-circle">3</div>
+    <div>
+      <h2>Server Requirements</h2>
+      <div class="section-desc">Minimum and recommended stack for production deployment</div>
+    </div>
+  </div>
+
+  <p>The portal is designed to run on a single AWS EC2 instance in a production-grade configuration. The specifications below reflect the minimum requirements for stable operation with up to 500 active smart meters; scale up the instance type for larger deployments.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Component</th><th>Requirement</th><th>Recommended Version</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Operating System</strong></td>
+        <td>Ubuntu 22.04 LTS (Jammy)</td>
+        <td>Latest point release</td>
+        <td>LTS ensures 5-year security support until April 2027</td>
+      </tr>
+      <tr>
+        <td><strong>Web Server</strong></td>
+        <td>Apache HTTP Server 2.4+</td>
+        <td>2.4.52+</td>
+        <td>Requires <code>mod_rewrite</code>, <code>mod_ssl</code>, <code>mod_headers</code>, <code>mod_deflate</code></td>
+      </tr>
+      <tr>
+        <td><strong>PHP</strong></td>
+        <td>PHP 8.1 or PHP 8.3</td>
+        <td>PHP 8.3 (active)</td>
+        <td>Extensions: <code>pdo_mysql</code>, <code>curl</code>, <code>mbstring</code>, <code>intl</code>, <code>gd</code>, <code>zip</code>, <code>xml</code>, <code>openssl</code>, <code>json</code></td>
+      </tr>
+      <tr>
+        <td><strong>Local Database</strong></td>
+        <td>MySQL 8.0+</td>
+        <td>8.0.x</td>
+        <td>InnoDB, UTF8MB4, local TCP 3306; bind to <code>127.0.0.1</code> only</td>
+      </tr>
+      <tr>
+        <td><strong>Remote Database</strong></td>
+        <td>PostgreSQL 10+</td>
+        <td>10+ (HWA-managed)</td>
+        <td>Outbound TCP 5432 to <code>102.218.58.66</code> must be allowed in AWS security group</td>
+      </tr>
+      <tr>
+        <td><strong>Composer</strong></td>
+        <td>Composer 2.x</td>
+        <td>2.x latest</td>
+        <td>Used for PHP dependency management at deploy time</td>
+      </tr>
+      <tr>
+        <td><strong>Git</strong></td>
+        <td>Git 2.x</td>
+        <td>2.34+</td>
+        <td>Used for code deployment; SSH deploy key or HTTPS token required</td>
+      </tr>
+      <tr>
+        <td><strong>SSL Certificates</strong></td>
+        <td>Let's Encrypt via Certbot</td>
+        <td>Latest Certbot</td>
+        <td>Auto-renewal cron required; see Section 5</td>
+      </tr>
+      <tr>
+        <td><strong>EC2 Instance Type</strong></td>
+        <td>t3.medium minimum</td>
+        <td>t3.large for production</td>
+        <td>2 vCPU, 4 GB RAM minimum; 8 GB RAM recommended for bulk processing</td>
+      </tr>
+      <tr>
+        <td><strong>Storage</strong></td>
+        <td>20 GB root EBS volume</td>
+        <td>50 GB gp3</td>
+        <td>Monitor disk usage; Apache and Yii logs can grow significantly</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="subsection-heading">PHP Extension Verification</div>
+  <p>After installation, verify all required PHP extensions are loaded:</p>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">bash — verify PHP extensions</span>
+    </div>
+    <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">php -m | grep -E "pdo_mysql|curl|mbstring|intl|gd|zip|xml|openssl"</span>
+<span class="t-out">curl
+gd
+intl
+mbstring
+openssl
+pdo_mysql
+xml
+zip</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">php -v</span>
+<span class="t-info">PHP 8.3.x (cli) (built: ...) ( NTS )
+Copyright (c) The PHP Group
+Zend Engine v4.3.x, Copyright (c) Zend Technologies
+    with Zend OPcache v8.3.x, Copyright (c), by Zend Technologies</span></pre>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 3 — Server Requirements</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4 — ENVIRONMENT VARIABLES
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s4">
+  <div class="section-heading">
+    <div class="section-num-circle">4</div>
+    <div>
+      <h2>Environment Variables (.env)</h2>
+      <div class="section-desc">Complete reference for all application configuration keys</div>
+    </div>
+  </div>
+
+  <p>All environment-specific configuration is managed through a <code>.env</code> file in the application root (<code>/var/www/nobleus-portal/.env</code>). This file is loaded at bootstrap by the Yii 2 application. It is <strong>never committed to Git</strong> — the repository contains a <code>.env.example</code> template only.</p>
+
+  <div class="callout danger">
+    <span class="callout-icon">🚫</span>
+    <div class="callout-body">
+      <strong>Security Critical</strong>
+      Never commit <code>.env</code> to any Git repository. The file contains database credentials, API tokens, and JWT secrets. Set file permissions to <code>640</code> and owner to <code>www-data:www-data</code>. Rotate all tokens at least every 6 months as per the security policy.
+    </div>
+  </div>
+
+  <div class="subsection-heading">Full .env Reference</div>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">/var/www/nobleus-portal/.env</span>
+    </div>
+    <pre><code><span class="c-comment"># ═══════════════════════════════════════════════════════════════
+# HWA Smart Metering Portal — Environment Configuration
+# Copy this file from .env.example and fill in production values.
+# Owner: www-data:www-data   Permissions: 640
+# ═══════════════════════════════════════════════════════════════</span>
+
+<span class="c-comment"># ── Application ─────────────────────────────────────────────────</span>
+<span class="c-key">YII_ENV</span><span class="c-op">=</span><span class="c-str">prod</span>
+<span class="c-key">YII_DEBUG</span><span class="c-op">=</span><span class="c-str">false</span>
+<span class="c-key">APP_NAME</span><span class="c-op">=</span><span class="c-str">"HWA Smart Metering Portal"</span>
+
+<span class="c-comment"># ── Local MySQL Database ─────────────────────────────────────────</span>
+<span class="c-key">DB_HOST</span><span class="c-op">=</span><span class="c-str">127.0.0.1</span>
+<span class="c-key">DB_PORT</span><span class="c-op">=</span><span class="c-num">3306</span>
+<span class="c-key">DB_NAME</span><span class="c-op">=</span><span class="c-str">nobleus_db</span>
+<span class="c-key">DB_USER</span><span class="c-op">=</span><span class="c-str">nobleus_app</span>
+<span class="c-key">DB_PASSWORD</span><span class="c-op">=</span><span class="c-str">YOUR_STRONG_MYSQL_PASSWORD</span>
+
+<span class="c-comment"># ── ThingsBoard IoT Integration ──────────────────────────────────</span>
+<span class="c-comment"># Webhook token — must match the token configured in the TB rule engine</span>
+<span class="c-key">TB_WEBHOOK_TOKEN</span><span class="c-op">=</span><span class="c-str">YOUR_TB_WEBHOOK_SECRET_TOKEN</span>
+<span class="c-comment"># ThingsBoard base URL (include trailing slash)</span>
+<span class="c-key">TB_URL</span><span class="c-op">=</span><span class="c-url">https://iot.hargeisawatertech.com/</span>
+<span class="c-comment"># ThingsBoard API credentials (for reading device telemetry)</span>
+<span class="c-key">TB_USERNAME</span><span class="c-op">=</span><span class="c-str">api-service@hwa.so</span>
+<span class="c-key">TB_PASSWORD</span><span class="c-op">=</span><span class="c-str">YOUR_TB_API_PASSWORD</span>
+<span class="c-comment"># The telemetry key name used by meters to report cubic-metre readings</span>
+<span class="c-key">TB_TELEMETRY_KEY</span><span class="c-op">=</span><span class="c-str">volume_m3</span>
+
+<span class="c-comment"># ── Portal / API URLs ────────────────────────────────────────────</span>
+<span class="c-key">BILLING_PORTAL_URL</span><span class="c-op">=</span><span class="c-url">https://billing.hargeisawatertech.com</span>
+<span class="c-key">PORTAL_URL</span><span class="c-op">=</span><span class="c-url">https://portal.hargeisawatertech.com</span>
+<span class="c-key">API_BASE_URL</span><span class="c-op">=</span><span class="c-url">https://api.hargeisawatertech.com</span>
+
+<span class="c-comment"># ── HWA Core Billing API ─────────────────────────────────────────</span>
+<span class="c-comment"># Primary endpoint: reading ingestion and billing sync</span>
+<span class="c-key">CORE_READING_API_URL</span><span class="c-op">=</span><span class="c-url">https://reading.hargeisawatertech.com</span>
+<span class="c-comment"># Meters meta-data endpoint</span>
+<span class="c-key">CORE_METERS_API_URL</span><span class="c-op">=</span><span class="c-url">https://reading.hargeisawatertech.com/api/meters</span>
+<span class="c-comment"># JWT bearer token for Core API authentication — rotate every 6 months</span>
+<span class="c-key">CORE_API_TOKEN</span><span class="c-op">=</span><span class="c-str">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...YOUR_JWT_HERE</span>
+<span class="c-comment"># Optional: set to 1 ONLY for local development to bypass SSL verification</span>
+<span class="c-comment"># MUST be 0 or unset in production</span>
+<span class="c-key">CORE_API_INSECURE_SSL</span><span class="c-op">=</span><span class="c-num">0</span></code></pre>
+  </div>
+
+  <div class="subsection-heading">Key Descriptions</div>
+  <table class="data-table compact">
+    <thead>
+      <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>YII_DEBUG</code></td><td><span class="badge badge-danger">Critical</span></td><td>Must be <code>false</code> in production. Debug mode exposes stack traces publicly.</td></tr>
+      <tr><td><code>TB_WEBHOOK_TOKEN</code></td><td><span class="badge badge-danger">Required</span></td><td>Shared secret validating inbound ThingsBoard webhook calls. Used as Bearer token.</td></tr>
+      <tr><td><code>TB_TELEMETRY_KEY</code></td><td><span class="badge badge-danger">Required</span></td><td>JSON key in ThingsBoard telemetry payload containing the cubic-metre reading value.</td></tr>
+      <tr><td><code>CORE_API_TOKEN</code></td><td><span class="badge badge-danger">Required</span></td><td>JWT used as <code>Authorization: Bearer</code> header on all calls to the Core Billing API.</td></tr>
+      <tr><td><code>CORE_API_INSECURE_SSL</code></td><td><span class="badge badge-warn">Optional</span></td><td>Set to <code>1</code> only in dev environments with self-signed certs. Never <code>1</code> in production.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Token Rotation Policy</strong>
+      <code>CORE_API_TOKEN</code> (JWT) and <code>TB_WEBHOOK_TOKEN</code> must be rotated every 6 months or immediately upon any suspected compromise. Update the <code>.env</code> file and reload Apache (<code>sudo systemctl reload apache2</code>) — no application restart is required for environment variable changes.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 4 — Environment Variables</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 5 — APACHE VIRTUAL HOSTS
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s5">
+  <div class="section-heading">
+    <div class="section-num-circle">5</div>
+    <div>
+      <h2>Apache Virtual Hosts</h2>
+      <div class="section-desc">Virtual host configuration, SSL setup, and catch-all protection</div>
+    </div>
+  </div>
+
+  <p>The portal uses Apache 2.4 with multiple named virtual hosts to serve different sub-domains from the same EC2 instance. All virtual host configuration files reside in <code>/etc/apache2/sites-available/</code> and are symlinked via <code>a2ensite</code>.</p>
+
+  <div class="subsection-heading">Virtual Host File Inventory</div>
+  <table class="data-table">
+    <thead>
+      <tr><th>Config File</th><th>Domain</th><th>Document Root</th><th>SSL File</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>portal.conf</code></td>
+        <td>portal.hargeisawatertech.com</td>
+        <td><code>/var/www/nobleus-portal/web</code></td>
+        <td><code>portal-le-ssl.conf</code></td>
+      </tr>
+      <tr>
+        <td><code>billing.conf</code></td>
+        <td>billing.hargeisawatertech.com</td>
+        <td><code>/var/www/nobleus-portal/web</code></td>
+        <td><code>billing-le-ssl.conf</code></td>
+      </tr>
+      <tr>
+        <td><code>api.conf</code></td>
+        <td>api.hargeisawatertech.com</td>
+        <td><code>/var/www/nobleus-portal/web</code></td>
+        <td><code>api-le-ssl.conf</code></td>
+      </tr>
+      <tr>
+        <td><code>000-catch-all.conf</code></td>
+        <td><em>(bare IP / unmatched)</em></td>
+        <td><code>/var/www/html/blocked</code></td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="subsection-heading">Sample Portal Virtual Host (HTTP → HTTPS redirect)</div>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">/etc/apache2/sites-available/portal.conf</span>
+    </div>
+    <pre><code><span class="c-key">&lt;VirtualHost *:80&gt;</span>
+    <span class="c-cmd">ServerName</span>  <span class="c-str">portal.hargeisawatertech.com</span>
+    <span class="c-cmd">ServerAlias</span> <span class="c-str">www.portal.hargeisawatertech.com</span>
+    <span class="c-comment"># Redirect all HTTP to HTTPS (Certbot manages this block)</span>
+    <span class="c-cmd">RewriteEngine On</span>
+    <span class="c-cmd">RewriteRule</span> <span class="c-arg">^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]</span>
+<span class="c-key">&lt;/VirtualHost&gt;</span>
+
+<span class="c-key">&lt;VirtualHost *:443&gt;</span>
+    <span class="c-cmd">ServerName</span>   <span class="c-str">portal.hargeisawatertech.com</span>
+    <span class="c-cmd">DocumentRoot</span> <span class="c-path">/var/www/nobleus-portal/web</span>
+
+    <span class="c-key">&lt;Directory /var/www/nobleus-portal/web&gt;</span>
+        <span class="c-cmd">Options</span>         <span class="c-str">-Indexes +FollowSymLinks</span>
+        <span class="c-cmd">AllowOverride</span>   <span class="c-str">All</span>
+        <span class="c-cmd">Require</span>         <span class="c-str">all granted</span>
+    <span class="c-key">&lt;/Directory&gt;</span>
+
+    <span class="c-comment"># SSL — managed by Certbot</span>
+    <span class="c-cmd">SSLEngine</span>             <span class="c-str">on</span>
+    <span class="c-cmd">SSLCertificateFile</span>    <span class="c-path">/etc/letsencrypt/live/portal.hargeisawatertech.com/fullchain.pem</span>
+    <span class="c-cmd">SSLCertificateKeyFile</span> <span class="c-path">/etc/letsencrypt/live/portal.hargeisawatertech.com/privkey.pem</span>
+    <span class="c-cmd">Include</span>               <span class="c-path">/etc/letsencrypt/options-ssl-apache.conf</span>
+
+    <span class="c-comment"># Security headers</span>
+    <span class="c-cmd">Header always set Strict-Transport-Security</span> <span class="c-str">"max-age=31536000; includeSubDomains"</span>
+    <span class="c-cmd">Header always set X-Content-Type-Options</span>     <span class="c-str">"nosniff"</span>
+    <span class="c-cmd">Header always set X-Frame-Options</span>            <span class="c-str">"SAMEORIGIN"</span>
+
+    <span class="c-cmd">ErrorLog</span>  <span class="c-path">${APACHE_LOG_DIR}/portal-error.log</span>
+    <span class="c-cmd">CustomLog</span> <span class="c-path">${APACHE_LOG_DIR}/portal-access.log combined</span>
+<span class="c-key">&lt;/VirtualHost&gt;</span></code></pre>
+  </div>
+
+  <div class="subsection-heading">Enabling Sites &amp; Reloading Apache</div>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">bash — enable vhosts</span>
+    </div>
+    <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo a2ensite portal.conf billing.conf api.conf 000-catch-all.conf</span>
+<span class="t-out">Enabling site portal.
+Enabling site billing.
+Enabling site api.
+Enabling site 000-catch-all.</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo apache2ctl configtest</span>
+<span class="t-out">Syntax OK</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo systemctl reload apache2</span></pre>
+  </div>
+
+  <div class="subsection-heading">SSL Certificate Management (Certbot)</div>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">bash — certbot operations</span>
+    </div>
+    <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Initial certificate issuance for all domains</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo certbot --apache -d portal.hargeisawatertech.com \</span>
+<span class="t-cmd">    -d billing.hargeisawatertech.com \</span>
+<span class="t-cmd">    -d api.hargeisawatertech.com</span>
+
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Test auto-renewal (dry run)</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo certbot renew --dry-run</span>
+<span class="t-info">Simulating renewal of an existing certificate for portal.hargeisawatertech.com
+...
+Congratulations, all simulated renewals succeeded:</span>
+<span class="t-out">  /etc/letsencrypt/live/portal.hargeisawatertech.com/fullchain.pem (success)</span>
+
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Check cron entry (Certbot installs this automatically)</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo cat /etc/cron.d/certbot</span>
+<span class="t-out">0 */12 * * * root test -x /usr/bin/certbot -a \! -d /run/systemd/system &amp;&amp; perl -e 'sleep int(rand(43200))' &amp;&amp; certbot -q renew</span></pre>
+  </div>
+
+  <div class="callout note">
+    <span class="callout-icon">🛡️</span>
+    <div class="callout-body">
+      <strong>Catch-All Virtual Host — Always Keep Enabled</strong>
+      The <code>000-catch-all.conf</code> virtual host intercepts any HTTP request that does not match a named <code>ServerName</code>. This prevents direct access to the application via the raw EC2 IP address (e.g. <code>http://54.x.x.x/</code>), which could bypass security headers and expose internal details. It returns a generic <code>403 Forbidden</code> for all bare-IP or unrecognised hostname requests.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 5 — Apache Virtual Hosts</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 6 — DATABASE
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s6">
+  <div class="section-heading">
+    <div class="section-num-circle">6</div>
+    <div>
+      <h2>Database — Local MySQL &amp; Remote PostgreSQL</h2>
+      <div class="section-desc">Schema overview, migration management, and remote connectivity</div>
+    </div>
+  </div>
+
+  <div class="subsection-heading">6.1 &nbsp;Local MySQL Database</div>
+  <p>The portal's primary data store is a MySQL 8.0 database named <code>nobleus_db</code> running locally on the EC2 instance at <code>127.0.0.1:3306</code>. The MySQL user <code>nobleus_app</code> is restricted to localhost connections only. Schema is managed via Yii 2 migrations.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Table</th><th>Purpose</th><th>Key Columns</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>meter_reading_raw</code></td>
+        <td>All raw telemetry records received from ThingsBoard webhooks</td>
+        <td>id, meter_id, ts (epoch ms), value_m3, received_at, push_status</td>
+      </tr>
+      <tr>
+        <td><code>billing_ledger</code></td>
+        <td>Processed billing entries derived from raw readings; one record per billing period per meter</td>
+        <td>id, meter_id, billing_month, billing_date, consumption_m3, pushed_at, push_status</td>
+      </tr>
+      <tr>
+        <td><code>billing_audit_logs</code></td>
+        <td>Full audit trail of every attempt to push a billing entry to the Core Billing API</td>
+        <td>id, ledger_id, attempted_at, http_status, response_body, success</td>
+      </tr>
+      <tr>
+        <td><code>meters</code></td>
+        <td>Registered meter inventory — maps ThingsBoard device IDs to HWA account numbers</td>
+        <td>id, tb_device_id, account_no, serial_no, zone, install_date, active</td>
+      </tr>
+      <tr>
+        <td><code>meter_assignments</code></td>
+        <td>Tracks which customer account a meter is assigned to over time (history-aware)</td>
+        <td>id, meter_id, customer_id, assigned_from, assigned_to</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="subsection-heading">Running Migrations</div>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">bash — Yii 2 migrations</span>
+    </div>
+    <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">cd /var/www/nobleus-portal</span>
+<span class="t-prompt">ubuntu@hwa-portal:/var/www/nobleus-portal$</span> <span class="t-cmd">php yii migrate</span>
+<span class="t-info">Yii Migration Tool (based on Yii v2.0.x)
+
+Total 3 new migrations to be applied:
+    m250601_000001_create_meter_reading_raw
+    m250601_000002_create_billing_ledger
+    m250601_000003_create_billing_audit_logs</span>
+<span class="t-dim">Apply the above migrations? (yes|no) [no]:</span> <span class="t-cmd">yes</span>
+<span class="t-out">*** applying m250601_000001_create_meter_reading_raw
+    &gt; create table {{%meter_reading_raw}} ... done (time: 0.012s)
+*** applied m250601_000001_create_meter_reading_raw (time: 0.013s)
+*** applying m250601_000002_create_billing_ledger ... done
+*** applying m250601_000003_create_billing_audit_logs ... done
+
+Migrated up successfully.</span></pre>
+  </div>
+
+  <div class="subsection-heading">Checking the Failed Push Queue</div>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">SQL — failed billing push records</span>
+    </div>
+    <pre><code><span class="c-comment">-- View all billing ledger entries that failed to push to Core API</span>
+<span class="c-key">SELECT</span>
+    bl.id,
+    bl.meter_id,
+    bl.billing_month,
+    bl.billing_date,
+    bl.consumption_m3,
+    bl.push_status,
+    bal.attempted_at,
+    bal.http_status,
+    bal.response_body
+<span class="c-key">FROM</span> billing_ledger bl
+<span class="c-key">LEFT JOIN</span> billing_audit_logs bal <span class="c-key">ON</span> bal.ledger_id <span class="c-op">=</span> bl.id
+<span class="c-key">WHERE</span>  bl.push_status <span class="c-op">=</span> <span class="c-str">'failed'</span>
+<span class="c-key">ORDER BY</span> bal.attempted_at <span class="c-key">DESC</span>
+<span class="c-key">LIMIT</span> <span class="c-num">50</span>;</code></pre>
+  </div>
+
+  <div class="subsection-heading">6.2 &nbsp;Remote PostgreSQL (HWA On-Premise)</div>
+  <p>The Core Billing API writes billing records into an on-premise PostgreSQL database. The portal does not connect to PostgreSQL directly; the Core Billing REST API acts as the intermediary. However, sysadmins must ensure TCP 5432 outbound is reachable for troubleshooting and that the FortiGate VIP is operational.</p>
+
+  <table class="data-table compact">
+    <thead>
+      <tr><th>Parameter</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Public VIP (FortiGate)</td><td><code>102.218.58.66</code></td></tr>
+      <tr><td>Internal Host (LAN)</td><td><code>10.10.50.120</code></td></tr>
+      <tr><td>Port</td><td><code>5432</code></td></tr>
+      <tr><td>Database</td><td><code>HWA_DATA</code></td></tr>
+      <tr><td>User</td><td><code>openpg</code></td></tr>
+      <tr><td>SSL Mode</td><td><code>require</code> (self-signed cert, verify-full not enforced)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="subsection-heading">Verifying Remote PostgreSQL Reachability</div>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">bash — connectivity check from EC2</span>
+    </div>
+    <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Step 1: Verify TCP port is reachable</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">nc -vz 102.218.58.66 5432</span>
+<span class="t-out">Connection to 102.218.58.66 5432 port [tcp/postgresql] succeeded!</span>
+
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Step 2: Attempt psql connection</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">psql -h 102.218.58.66 -p 5432 -U openpg -d HWA_DATA -c "SELECT version();"</span>
+<span class="t-dim">Password for user openpg:</span>
+<span class="t-out">                          version
+----------------------------------------------------------
+ PostgreSQL 14.x on x86_64-pc-linux-gnu, compiled by ...
+(1 row)</span></pre>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>AWS Security Group Outbound Rule Required</strong>
+      Ensure the EC2 instance's security group has an <strong>outbound rule allowing TCP 5432 to 102.218.58.66/32</strong>. By default, AWS security groups deny all outbound traffic if a custom outbound rule is specified. Missing this rule causes silent connection timeouts when the portal attempts to push billing data.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 6 — Database</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 7 — BILLING DATE POLICY (28TH RULE)
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s7">
+  <div class="section-heading">
+    <div class="section-num-circle">7</div>
+    <div>
+      <h2>Billing Date Policy — The 28th Rule</h2>
+      <div class="section-desc">How the system assigns official billing dates to meter readings</div>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">📅</span>
+    <div class="callout-body">
+      <strong>Company Policy — Billing Date Standardisation</strong>
+      By HWA billing policy, <strong>all meter readings use the 28th of the reading's billing month as the official billing date</strong>, regardless of when within the month the reading was actually recorded or processed. This ensures consistent billing cycles and simplifies reconciliation with the HWA Core Billing system.
+    </div>
+  </div>
+
+  <div class="subsection-heading">Implementation in Code</div>
+  <p>The 28th-of-month rule is implemented in two places in the application:</p>
+
+  <p><strong>Bulk Action (<code>actionPostToBilling</code>):</strong> When posting a batch of readings for a given month, the billing date is computed as:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">PHP — bulk billing date assignment</span>
+    </div>
+    <pre><code><span class="c-comment">// $month is in 'YYYY-MM' format (e.g. '2026-06')</span>
+<span class="c-comment">// Always append '-28' to get the standardised billing date</span>
+<span class="c-key">$billingDate</span> <span class="c-op">=</span> <span class="c-str">$month</span> <span class="c-op">.</span> <span class="c-str">'-28'</span>;
+
+<span class="c-comment">// Example: $month = '2026-06'  →  $billingDate = '2026-06-28'</span>
+<span class="c-key">$payload</span> <span class="c-op">=</span> [
+    <span class="c-str">'accountNo'</span>   <span class="c-op">=&gt;</span> <span class="c-key">$reading</span><span class="c-op">-&gt;</span>account_no,
+    <span class="c-str">'readingDate'</span> <span class="c-op">=&gt;</span> <span class="c-key">$billingDate</span>,
+    <span class="c-str">'reading'</span>     <span class="c-op">=&gt;</span> <span class="c-key">$reading</span><span class="c-op">-&gt;</span>value_m3,
+];</code></pre>
+  </div>
+
+  <p><strong>Single Import (<code>actionImport</code>):</strong> When importing individual readings, the billing date is derived from the reading's own timestamp, replacing the day component with 28:</p>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">PHP — single reading billing date</span>
+    </div>
+    <pre><code><span class="c-comment">// Derive billing date: take reading's year-month, fix day to 28</span>
+<span class="c-key">$billingDate</span> <span class="c-op">=</span> <span class="c-cmd">date</span>(<span class="c-str">'Y-m'</span>, <span class="c-key">$reading</span><span class="c-op">-&gt;</span>ts) <span class="c-op">.</span> <span class="c-str">'-28'</span>;
+
+<span class="c-comment">// If reading was on 2026-07-15 09:30:00 UTC,
+// billingDate becomes '2026-07-28'</span></code></pre>
+  </div>
+
+  <div class="subsection-heading">Billing Date Behaviour Matrix</div>
+  <table class="data-table">
+    <thead>
+      <tr><th>Scenario</th><th>Reading Date</th><th>Billing Date Assigned</th><th>Description / Notes Field</th><th>Outcome</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Reading on the 28th</td>
+        <td>2026-06-28</td>
+        <td>2026-06-28</td>
+        <td>No special note appended</td>
+        <td><span class="badge badge-success">Standard</span></td>
+      </tr>
+      <tr>
+        <td>Reading on another day</td>
+        <td>2026-06-15</td>
+        <td>2026-06-28</td>
+        <td>Description appended: <em>"Reading date adjusted to billing date 28th"</em></td>
+        <td><span class="badge badge-info">Adjusted</span></td>
+      </tr>
+      <tr>
+        <td>Reading on last day of month</td>
+        <td>2026-06-30</td>
+        <td>2026-06-28</td>
+        <td>Description appended noting original reading date</td>
+        <td><span class="badge badge-info">Adjusted</span></td>
+      </tr>
+      <tr>
+        <td>No reading for month</td>
+        <td>—</td>
+        <td>—</td>
+        <td>Entry skipped entirely; no billing record pushed</td>
+        <td><span class="badge badge-warn">Skipped</span></td>
+      </tr>
+      <tr>
+        <td>Zero reading received</td>
+        <td>Any date</td>
+        <td>Month-28</td>
+        <td>Zero-consumption record pushed; flagged in audit log</td>
+        <td><span class="badge badge-warn">Review</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout note">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <strong>February Handling</strong>
+      February always has at least 28 days (1–28), so the 28th always exists and is valid for any year. No special leap-year logic is required for billing date generation.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 7 — Billing Date Policy</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 8 — DEPLOYMENT & UPGRADE
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s8">
+  <div class="section-heading">
+    <div class="section-num-circle">8</div>
+    <div>
+      <h2>Deployment &amp; Upgrade Procedures</h2>
+      <div class="section-desc">First-time server setup and rolling code upgrades</div>
+    </div>
+  </div>
+
+  <div class="subsection-heading">8.1 &nbsp;First-Time Setup</div>
+  <p>Follow these steps in sequence on a freshly provisioned Ubuntu 22.04 EC2 instance. Ensure all prerequisites from Section 3 are installed before beginning.</p>
+
+  <ol class="steps">
+    <li class="step-item">
+      <span class="step-num">1</span>
+      <div class="step-body">
+        <strong>Clone the repository</strong><br />
+        Clone the application code to the web root using your deploy key or HTTPS token.
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo mkdir -p /var/www/nobleus-portal</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chown ubuntu:ubuntu /var/www/nobleus-portal</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">git clone git@github.com:hwa-tech/nobleus-portal.git /var/www/nobleus-portal</span>
+<span class="t-out">Cloning into '/var/www/nobleus-portal'...
+remote: Enumerating objects: 1842, done.
+remote: Counting objects: 100% (1842/1842), done.
+Receiving objects: 100% (1842/1842), done.</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">2</span>
+      <div class="step-body">
+        <strong>Create and populate the .env file</strong><br />
+        Copy the example file and fill in all production credentials as described in Section 4.
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">cp /var/www/nobleus-portal/.env.example /var/www/nobleus-portal/.env</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">nano /var/www/nobleus-portal/.env</span>
+<span class="t-dim"># Edit all values, then save</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chown www-data:www-data /var/www/nobleus-portal/.env</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chmod 640 /var/www/nobleus-portal/.env</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">3</span>
+      <div class="step-body">
+        <strong>Install PHP dependencies with Composer</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">cd /var/www/nobleus-portal && composer install --no-dev --optimize-autoloader</span>
+<span class="t-out">Installing dependencies from lock file (including require-dev)
+Package operations: 94 installs, 0 updates, 0 removals
+  - Installing yiisoft/yii2 (2.0.49): Extracting archive
+  ...
+Generating optimized autoload files
+Generated optimized autoload files containing 2534 classes</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">4</span>
+      <div class="step-body">
+        <strong>Run database migrations</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:/var/www/nobleus-portal$</span> <span class="t-cmd">php yii migrate --interactive=0</span>
+<span class="t-out">Migrated up successfully.</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">5</span>
+      <div class="step-body">
+        <strong>Set correct file permissions</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chown -R www-data:www-data /var/www/nobleus-portal</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chmod -R 755 /var/www/nobleus-portal</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chmod -R 775 /var/www/nobleus-portal/runtime</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo chmod -R 775 /var/www/nobleus-portal/web/assets</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">6</span>
+      <div class="step-body">
+        <strong>Enable Apache virtual hosts and reload</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo a2enmod rewrite ssl headers deflate</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo a2ensite portal.conf billing.conf api.conf 000-catch-all.conf</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo apache2ctl configtest && sudo systemctl reload apache2</span>
+<span class="t-out">Syntax OK</span></pre>
+        </div>
+      </div>
+    </li>
+  </ol>
+
+  <div class="subsection-heading">8.2 &nbsp;Code Upgrade (Rolling Update)</div>
+  <p>Use the following procedure for routine code updates. The application remains online during the upgrade; Apache is only reloaded (not restarted) at the end.</p>
+
+  <ol class="steps">
+    <li class="step-item">
+      <span class="step-num">1</span>
+      <div class="step-body">
+        <strong>Pull latest code from Git</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">cd /var/www/nobleus-portal && sudo -u www-data git pull origin main</span>
+<span class="t-out">Updating a1b2c3d..f4e5d6c
+Fast-forward
+ controllers/BillingController.php | 14 ++++---
+ models/MeterReading.php           |  8 ++--
+ 2 files changed, 22 insertions(+), 0 deletions(-)</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">2</span>
+      <div class="step-body">
+        <strong>Update Composer dependencies (if composer.json changed)</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:/var/www/nobleus-portal$</span> <span class="t-cmd">sudo -u www-data composer install --no-dev --optimize-autoloader</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">3</span>
+      <div class="step-body">
+        <strong>Apply any new database migrations</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:/var/www/nobleus-portal$</span> <span class="t-cmd">sudo -u www-data php yii migrate --interactive=0</span>
+<span class="t-out">No new migrations found. Your system is up-to-date.</span></pre>
+        </div>
+      </div>
+    </li>
+    <li class="step-item">
+      <span class="step-num">4</span>
+      <div class="step-body">
+        <strong>Reload Apache to pick up any new PHP OpCache changes</strong>
+        <div class="terminal-block" style="margin-top:.6rem;">
+          <div class="terminal-header"><span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span><span class="code-block-label">bash</span></div>
+          <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">sudo systemctl reload apache2</span>
+<span class="t-out"># No output = success</span></pre>
+        </div>
+      </div>
+    </li>
+  </ol>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 8 — Deployment &amp; Upgrade</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 9 — LOGS & MONITORING
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s9">
+  <div class="section-heading">
+    <div class="section-num-circle">9</div>
+    <div>
+      <h2>Logs &amp; Monitoring</h2>
+      <div class="section-desc">Log file locations, tailing commands, and database audit queries</div>
+    </div>
+  </div>
+
+  <p>The portal generates logs at three levels: the Apache web server layer (access and error), the Yii 2 application layer (runtime log), and the database audit layer (billing push history). Monitoring all three is essential for diagnosing integration issues quickly.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Log Name</th><th>File Path</th><th>Contains</th><th>Rotation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Apache Access Log (Portal)</td>
+        <td><code>/var/log/apache2/portal-access.log</code></td>
+        <td>All HTTP requests — method, URI, status code, response size, user-agent</td>
+        <td>Daily via <code>logrotate</code></td>
+      </tr>
+      <tr>
+        <td>Apache Error Log (Portal)</td>
+        <td><code>/var/log/apache2/portal-error.log</code></td>
+        <td>PHP fatal errors, Apache module errors, SSL errors</td>
+        <td>Daily via <code>logrotate</code></td>
+      </tr>
+      <tr>
+        <td>Yii App Log</td>
+        <td><code>/var/www/nobleus-portal/runtime/logs/app.log</code></td>
+        <td>Application-level info, warnings, errors; billing push results; ThingsBoard webhook events</td>
+        <td>Manual or application-managed</td>
+      </tr>
+      <tr>
+        <td>Catch-All Access Log</td>
+        <td><code>/var/log/apache2/catchall-access.log</code></td>
+        <td>All requests arriving via bare IP or unrecognised hostname — security interest</td>
+        <td>Daily via <code>logrotate</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="subsection-heading">Tailing Logs in Real-Time</div>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">bash — live log monitoring</span>
+    </div>
+    <pre><span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Follow application log (Yii 2)</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">tail -f /var/www/nobleus-portal/runtime/logs/app.log</span>
+<span class="t-out">2026-07-08 09:15:32 [info][application] ThingsBoard webhook received: device tb-device-00142, value 1247.8 m³
+2026-07-08 09:15:33 [info][application] Billing push SUCCESS: account 4521-A, billing_date 2026-06-28, http_status 200
+2026-07-08 09:15:34 [warning][application] Billing push FAILED: account 4522-B, http_status 422, response: {"error":"duplicate_entry"}</span>
+
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Follow Apache error log (PHP + Apache errors)</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">tail -f /var/log/apache2/portal-error.log</span>
+
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd"># Combined multi-log tail</span>
+<span class="t-prompt">ubuntu@hwa-portal:~$</span> <span class="t-cmd">tail -f /var/www/nobleus-portal/runtime/logs/app.log \</span>
+<span class="t-cmd">         /var/log/apache2/portal-error.log</span></pre>
+  </div>
+
+  <div class="subsection-heading">Billing Audit Log Query — Failed Pushes</div>
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="cb-dot red"></span><span class="cb-dot yellow"></span><span class="cb-dot green"></span>
+      <span class="code-block-label">SQL — billing audit investigation</span>
+    </div>
+    <pre><code><span class="c-comment">-- Recent billing push failures with full response details</span>
+<span class="c-key">SELECT</span>
+    bal.id           <span class="c-key">AS</span> audit_id,
+    bl.meter_id,
+    bl.billing_month,
+    bl.billing_date,
+    bal.attempted_at,
+    bal.http_status,
+    <span class="c-cmd">LEFT</span>(bal.response_body, <span class="c-num">200</span>) <span class="c-key">AS</span> response_snippet,
+    bal.success
+<span class="c-key">FROM</span>       billing_audit_logs bal
+<span class="c-key">INNER JOIN</span> billing_ledger bl <span class="c-key">ON</span> bl.id <span class="c-op">=</span> bal.ledger_id
+<span class="c-key">WHERE</span>  bal.success <span class="c-op">=</span> <span class="c-num">0</span>
+  <span class="c-key">AND</span>  bal.attempted_at <span class="c-op">&gt;=</span> <span class="c-cmd">NOW</span>() <span class="c-op">-</span> <span class="c-cmd">INTERVAL</span> <span class="c-num">7</span> <span class="c-str">DAY</span>
+<span class="c-key">ORDER BY</span>  bal.attempted_at <span class="c-key">DESC</span>;</code></pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>Pro Tip — Disk Space Monitoring</strong>
+      Set up a cron-based disk usage alert. The Yii application log and Apache access logs can fill the EBS volume if billing operations are very frequent. A simple alert: <code>df -h / | awk 'NR==2{if($5+0>80) print "DISK USAGE ABOVE 80%: "$5}'</code> run nightly from root's crontab provides early warning.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 9 — Logs &amp; Monitoring</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 10 — TROUBLESHOOTING REFERENCE
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s10">
+  <div class="section-heading">
+    <div class="section-num-circle">10</div>
+    <div>
+      <h2>Troubleshooting Reference</h2>
+      <div class="section-desc">Common issues, their causes, and step-by-step remediation</div>
+    </div>
+  </div>
+
+  <p>The table below covers the most frequently encountered operational issues. For each issue, the most likely cause is listed alongside the diagnostic command and recommended fix. Always check the Yii app log first (<code>runtime/logs/app.log</code>) before escalating.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Symptom</th><th>Likely Cause</th><th>Diagnostic Command</th><th>Resolution</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Billing push status shows "failed"</strong> in <code>billing_ledger</code></td>
+        <td>Expired <code>CORE_API_TOKEN</code> (JWT), network timeout to FortiGate, or duplicate entry rejected by Core API</td>
+        <td><code>tail -100 runtime/logs/app.log | grep FAILED</code>; check <code>billing_audit_logs.response_body</code></td>
+        <td>If JWT expired: generate a new token from HWA IT, update <code>.env</code>, reload Apache. If duplicate: mark record as resolved in <code>billing_ledger</code>. If network: check AWS security group outbound 443 and 5432.</td>
+      </tr>
+      <tr>
+        <td><strong>Apache SSL certificate error</strong> — browsers show "cert expired" warning</td>
+        <td>Certbot auto-renewal cron failed (e.g., port 80 blocked during ACME challenge, cron disabled)</td>
+        <td><code>sudo certbot certificates</code>; <code>sudo journalctl -u certbot</code>; <code>sudo crontab -l</code></td>
+        <td>Ensure port 80 inbound is open in AWS security group for ACME HTTP-01 challenge. Run <code>sudo certbot renew --force-renewal</code>. Verify <code>/etc/cron.d/certbot</code> exists and cron daemon is running.</td>
+      </tr>
+      <tr>
+        <td><strong>504 Gateway Timeout</strong> on bulk billing post action</td>
+        <td>Large number of records being pushed in a single HTTP request exceeds the Apache / PHP max execution time; or slow response from Core Billing API</td>
+        <td>Check <code>portal-error.log</code> for "Timeout" or "script timed out"; check Core API latency from EC2 with <code>curl -w "%{time_total}" -o /dev/null -s https://reading.hargeisawatertech.com/health</code></td>
+        <td>Increase <code>max_execution_time</code> in <code>/etc/php/8.3/apache2/php.ini</code> (e.g. to 300). Set <code>TimeOut 300</code> in the Apache vhost. Alternatively, run bulk operations from CLI: <code>php yii billing/post-to-billing --month=2026-06</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Meter readings not appearing</strong> in portal after ThingsBoard sends webhook</td>
+        <td>Invalid or missing <code>TB_WEBHOOK_TOKEN</code> causing 401 rejection; wrong <code>TB_TELEMETRY_KEY</code> so the payload key is not parsed; or webhook URL pointing to wrong endpoint</td>
+        <td><code>grep "webhook" runtime/logs/app.log | tail -20</code>; also check ThingsBoard rule engine logs for delivery failures</td>
+        <td>Verify the webhook URL in ThingsBoard points to <code>https://portal.hargeisawatertech.com/api/webhook/thingsboard</code>. Confirm <code>TB_WEBHOOK_TOKEN</code> in <code>.env</code> matches the token set in the TB rule engine. Verify <code>TB_TELEMETRY_KEY</code> matches the exact JSON key name in telemetry payloads.</td>
+      </tr>
+      <tr>
+        <td><strong>Readings appear as zero</strong> for multiple meters across a period</td>
+        <td>Meter device offline or not transmitting; ThingsBoard receiving zero telemetry; TB_TELEMETRY_KEY misconfigured returning 0 instead of null</td>
+        <td>Log into ThingsBoard UI → Latest Telemetry for the affected devices. Cross-reference with <code>SELECT meter_id, AVG(value_m3) FROM meter_reading_raw WHERE received_at > NOW()-INTERVAL 7 DAY GROUP BY meter_id;</code></td>
+        <td>If ThingsBoard shows non-zero values: check <code>TB_TELEMETRY_KEY</code> in <code>.env</code>. If ThingsBoard also shows zero: escalate to field team for physical meter inspection. Ensure the meter device has network connectivity and is reporting to TB successfully.</td>
+      </tr>
+      <tr>
+        <td><strong><code>billing_audit_logs</code> table is empty</strong> after bulk post action</td>
+        <td>No billing entries exist in <code>billing_ledger</code> for the selected month; OR the bulk post action did not run (user cancelled, permission error); OR audit log insert is failing silently</td>
+        <td><code>SELECT COUNT(*) FROM billing_ledger WHERE billing_month = '2026-06';</code>; check <code>runtime/logs/app.log</code> for "post-to-billing" action completion message</td>
+        <td>If ledger count is zero: readings were not processed for that month — check ThingsBoard webhook delivery for that month. If ledger exists but audit log is empty: check MySQL user permissions on <code>billing_audit_logs</code> table (<code>SHOW GRANTS FOR 'nobleus_app'@'localhost';</code>) and confirm INSERT privilege is granted.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <span class="callout-icon">🔍</span>
+    <div class="callout-body">
+      <strong>Escalation Path</strong>
+      If an issue cannot be resolved with the steps above, escalate in order: (1) HWA IT Help Desk for Core Billing API issues, (2) AWS support for EC2/networking issues, (3) ThingsBoard vendor support for IoT platform issues, (4) Nobleus development team for application code issues. Always capture the relevant log extract before escalating.
+    </div>
+  </div>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 10 — Troubleshooting</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 11 — SECURITY CHECKLIST
+══════════════════════════════════════════════════════════ -->
+<div class="doc-section" id="s11">
+  <div class="section-heading">
+    <div class="section-num-circle">11</div>
+    <div>
+      <h2>Security Checklist</h2>
+      <div class="section-desc">Mandatory and recommended security controls for production operation</div>
+    </div>
+  </div>
+
+  <p>The following checklist must be reviewed at initial deployment and re-verified at least every six months. Items marked with a red badge represent critical controls — any failure immediately increases attack surface or data exposure risk.</p>
+
+  <div class="subsection-heading">Token &amp; Credential Management</div>
+  <ul class="checklist">
+    <li><span class="check-icon">✅</span><div><strong>Rotate <code>CORE_API_TOKEN</code> (JWT) every 6 months.</strong> Coordinate with HWA IT to generate a new token from the Core Billing API. Update <code>.env</code> and reload Apache. Log the rotation date in the ops log. <span class="badge badge-danger">Critical</span></div></li>
+    <li><span class="check-icon">✅</span><div><strong>Rotate <code>TB_WEBHOOK_TOKEN</code> every 6 months.</strong> Generate a new strong random token (32+ chars), update in both ThingsBoard rule engine and the portal <code>.env</code>, then reload Apache. <span class="badge badge-danger">Critical</span></div></li>
+    <li><span class="check-icon">✅</span><div><strong>Never commit <code>.env</code> to any Git repository.</strong> Verify <code>.env</code> is listed in <code>.gitignore</code>. Periodically run <code>git log --all --full-history -- .env</code> to confirm it has never been committed. <span class="badge badge-danger">Critical</span></div></li>
+    <li><span class="check-icon">✅</span><div><strong>Set <code>.env</code> file permissions to <code>640</code>, owned by <code>www-data:www-data</code>.</strong> Command: <code>sudo chmod 640 /var/www/nobleus-portal/.env &amp;&amp; sudo chown www-data:www-data /var/www/nobleus-portal/.env</code></div></li>
+  </ul>
+
+  <div class="subsection-heading">Application Configuration</div>
+  <ul class="checklist">
+    <li><span class="check-icon">✅</span><div><strong>Ensure <code>YII_DEBUG=false</code> in production.</strong> Debug mode exposes full stack traces, configuration details, and SQL queries in the browser — a severe information disclosure risk. <span class="badge badge-danger">Critical</span></div></li>
+    <li><span class="check-icon">✅</span><div><strong>Ensure <code>YII_ENV=prod</code> in production.</strong> This disables development-only behaviours, profiling panels, and Gii code generation scaffolding.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>Ensure <code>CORE_API_INSECURE_SSL=0</code> (or unset) in production.</strong> Setting this to <code>1</code> disables TLS verification on all Core Billing API calls, exposing all JWT tokens to MITM attacks. <span class="badge badge-danger">Critical</span></div></li>
+  </ul>
+
+  <div class="subsection-heading">SSL &amp; Transport Security</div>
+  <ul class="checklist">
+    <li><span class="check-icon">✅</span><div><strong>SSL auto-renewal cron is active and tested.</strong> Run <code>sudo certbot renew --dry-run</code> monthly to verify ACME renewal works. Verify <code>/etc/cron.d/certbot</code> exists.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>HSTS header is set on all SSL virtual hosts.</strong> Confirm <code>Strict-Transport-Security</code> header appears in responses: <code>curl -I https://portal.hargeisawatertech.com | grep Strict</code></div></li>
+    <li><span class="check-icon">✅</span><div><strong>HTTP-to-HTTPS redirect is enforced on all virtual hosts.</strong> Test: <code>curl -I http://portal.hargeisawatertech.com</code> must return <code>301 Moved Permanently</code> pointing to HTTPS.</div></li>
+  </ul>
+
+  <div class="subsection-heading">Database Security</div>
+  <ul class="checklist">
+    <li><span class="check-icon">✅</span><div><strong>MySQL user <code>nobleus_app</code> is restricted to localhost connections only.</strong> Verify: <code>SELECT host, user FROM mysql.user WHERE user='nobleus_app';</code> — result must show <code>127.0.0.1</code> or <code>localhost</code> only.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>MySQL is bound to <code>127.0.0.1</code> only (not <code>0.0.0.0</code>).</strong> Check <code>/etc/mysql/mysql.conf.d/mysqld.cnf</code> — <code>bind-address = 127.0.0.1</code> must be set. Port 3306 must not appear in EC2 security group inbound rules.</div></li>
+  </ul>
+
+  <div class="subsection-heading">AWS &amp; Network Security</div>
+  <ul class="checklist">
+    <li><span class="check-icon">✅</span><div><strong>Catch-all virtual host (<code>000-catch-all.conf</code>) is always enabled.</strong> This prevents bare-IP access. Test: <code>curl -I http://&lt;EC2-IP&gt;/</code> must return <code>403</code>, not a portal page.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>AWS EC2 security group inbound rules: only ports 80 (HTTP) and 443 (HTTPS) open to <code>0.0.0.0/0</code>.</strong> SSH (port 22) must be restricted to the administrator's office IP range, never <code>0.0.0.0/0</code>. <span class="badge badge-danger">Critical</span></div></li>
+    <li><span class="check-icon">✅</span><div><strong>AWS EC2 security group outbound rules: allow TCP 443 to <code>0.0.0.0/0</code> and TCP 5432 to <code>102.218.58.66/32</code>.</strong> Restrict all other outbound traffic where possible.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>AWS EC2 instance is in a VPC with a defined network ACL.</strong> Ensure the NACL does not inadvertently expose internal services to the internet.</div></li>
+  </ul>
+
+  <div class="subsection-heading">Operational Hygiene</div>
+  <ul class="checklist">
+    <li><span class="check-icon">✅</span><div><strong>Ubuntu unattended security updates are enabled.</strong> Verify: <code>sudo dpkg -l unattended-upgrades</code> — package must be installed and configured. Check <code>/etc/apt/apt.conf.d/50unattended-upgrades</code>.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>EBS volume snapshots are scheduled (at minimum weekly).</strong> Configure AWS Backup or DLM (Data Lifecycle Manager) policy for the root EBS volume. Retain at least 4 snapshots.</div></li>
+    <li><span class="check-icon">✅</span><div><strong>MySQL backups are performed daily.</strong> Example cron: <code>0 2 * * * mysqldump -u root nobleus_db | gzip &gt; /var/backups/nobleus-$(date +\%F).sql.gz</code>. Verify backups can be restored.</div></li>
+  </ul>
+
+  <div class="section-footer">
+    <span class="sf-logo">HWA Smart Metering Portal</span>
+    <span>System Administrator Manual v1.0 &nbsp;·&nbsp; July 2026 &nbsp;·&nbsp; Section 11 — Security Checklist</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     GLOBAL FOOTER
+══════════════════════════════════════════════════════════ -->
+<div class="global-footer">
+  <div>
+    <strong>💧 Hargeisa Water Agency</strong><br />
+    <span style="font-size:.78rem;color:#bbdefb;">Smart Metering Portal · System Administrator Manual · Version 1.0</span>
+  </div>
+  <div style="text-align:right;">
+    <span style="font-size:.78rem;color:#bbdefb;">Issued: 8 July 2026 · Classification: Internal Use Only</span><br />
+    <span style="font-size:.72rem;color:#90caf9;">© 2026 Hargeisa Water Agency. All rights reserved.</span>
+  </div>
+</div>
+
+</div><!-- /page-wrap -->
 </body>
 </html>
